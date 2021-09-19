@@ -45,6 +45,10 @@ class Lex(object):
         self.tab_count = 0
         self.last_tab_count = 0
 
+        self.start_tabs = 0  # if a whole block is indented, this is the number of tabs where to start from
+        self.first = True # set to false after the first file or folder is created
+        
+
         self.lexer = lex.lex(module=self)
     
     tokens = (
@@ -123,7 +127,18 @@ class Lex(object):
 
         # print('t_SPACE', t)
         # print(len(t.value))
-        self.move_back(int(len(t.value)/4))
+
+        spaces = int(len(t.value)/4)
+
+        if self.first:
+            self.start_tabs = spaces
+            return
+
+        spaces -= self.start_tabs
+        # if spaces < self.start_tabs:
+            # return
+
+        self.move_back(spaces)
 
     def move_back(self, spaces):  # counts the spaces and moves back
         # global depth
@@ -186,6 +201,8 @@ class Lex(object):
             self.cwd = os.getcwd()
             print(os.getcwd())
 
+        if self.first:
+            self.first = False
 
         print( 'WAS??::', self.was_dir, self.tab_count, self.last_tab_count)
         if not self.was_dir and self.skip:#tab_count<0:#(tab_count>last_tab_count):
@@ -253,6 +270,8 @@ class tree(object):
                 - a string following the format carefully layed out in the treez specifcation (the notes in the readme)
 
         """
+        tree_string = tree_string.replace('\t','    ') # force tabs to 4 spaces
+
         self.lexer = Lex()
         self.lexer.lexer.input(tree_string)
         while True:

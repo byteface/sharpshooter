@@ -21,23 +21,44 @@ class TestCase(unittest.TestCase):
     def test_tree(self):
 
 # TODO - bug. hmmmmm. fuck
+#         s1 = """
+# +:dir
+#     +plugins
+#         +mail
+#             file3
+#             +things
+#                 +again
+#                     file8
+#                     file9.txt
+#                 file7
+#             +more
+#                 file6
+#         file4
+#             file5# comments are not allowed spaces before them yet. causes wrong directory
+#     file1# this is a file
+# file2
+#         """
+
+
         s1 = """
-+:dir
-    +plugins
-        +mail
-            file3
-            +things
-                +again
-                    file8
-                    file9.txt
-                file7
-            +more
-                file6
-        file4
-            file5# comments are not allowed spaces before them yet. causes wrong directory
-    file1# this is a file
-file2
+        +:dir
+            +plugins
+                +mail
+                    file3
+                    +things
+                        +again
+                            file8
+                            file9.txt
+                        file7
+                    +more
+                        file6
+                file4
+                    file5# comments are not allowed spaces before them yet. causes wrong directory
+            file1# this is a file
+        file2
         """
+
+
 
         import os
         # change to project root
