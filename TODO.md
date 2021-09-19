@@ -1,3 +1,5 @@
+NOTE - non of this works. its all TODO. then if i get this working will go over to readme.md
+
 ###deleting a file
 
 tree can also remove dirs and files. You guessed it. With the the - minus symbol

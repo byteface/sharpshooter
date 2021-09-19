@@ -3,3 +3,6 @@ __pycache__
 .DS_Store
 
 dir
+
+dist
+sharpshooter.egg-info
