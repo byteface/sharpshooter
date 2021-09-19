@@ -1,5 +1,7 @@
 #tree (sharpshooter)
 
+#WARNING - probs don't use this until about 0.0.5... just setting up and adding poc
+
 Shorthand templates for creating (or destroying) file-systems.
 
 tree could be written for any language.
@@ -65,3 +67,21 @@ tree doesn't wait to be told. Your files are now there.
 
 
 for future feature goals see TODO.md
+
+
+NOTES:
+
+came up with the idea while mucking around with a lexer. 
+
+https://www.dabeaz.com/ply/
+
+https://github.com/dabeaz/ply
+
+so am using this to do it.
+
+
+- remember it executes from where your python thinks is the current dir
+- if you're unsure set it first. i.e.
+
+import os
+os.chdir(os.path.dirname(os.path.abspath(__file__)))

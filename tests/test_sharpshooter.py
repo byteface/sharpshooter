@@ -20,7 +20,7 @@ class TestCase(unittest.TestCase):
 
     def test_tree(self):
 
-# TODO - bug. hmmmmm. fuck
+
 #         s1 = """
 # +:dir
 #     +plugins
@@ -39,7 +39,7 @@ class TestCase(unittest.TestCase):
 # file2
 #         """
 
-
+# NOTE - should now handle being tabbed in.
         s1 = """
         +:dir
             +plugins
