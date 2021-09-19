@@ -85,3 +85,14 @@ so am using this to do it.
 
 import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+
+## WARNING
+
+DON'T leave trailing negative space on lines. I use space to change dirs.
+
+uses 4 spaces not tabs. (I've not tested with tabs as my editor converts them to 4 spaces). will sort later.
+
+this is a work in progress. it creates files on your hard drive. so be careful.
+
+if using a comment. don't leave space before the #
