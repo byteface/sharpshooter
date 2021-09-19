@@ -52,7 +52,7 @@ from sharpshooter import tree
 
 tree('''
 +dir
-    file < some text
+    file
     +plugins
         +mail
             +vendor
