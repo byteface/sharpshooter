@@ -1,6 +1,4 @@
-#tree (sharpshooter)
-
-#WARNING - probs don't use this until about 0.0.5... just setting up and adding poc
+## tree (sharpshooter)
 
 Shorthand templates for creating (or destroying) file-systems.
 
@@ -10,7 +8,7 @@ tree could be written for any language.
 pip install sharpshooter
 ```
 
-##syntax
+## syntax
 
 To create a plain empty file just type a word i.e.
 
@@ -45,7 +43,7 @@ putting it all together…
 		file.py
 ```
 
-##usage
+## usage
 
 ```
 from sharpshooter import tree
@@ -66,33 +64,74 @@ tree('''
 tree doesn't wait to be told. Your files are now there.
 
 
-for future feature goals see TODO.md
+## deleting a file
+
+tree can also remove dirs and files. You guessed it. With the the - minus symbol
+
+```
+tree = ''' \
++dir
+    +plugins
+         -mail
+'''
+```
+
+But be mindful that would also create the dir and plugins dir if they didn't exist.
+
+tree will not ask twice. Your files are gone.
 
 
-NOTES:
+## comments
 
-came up with the idea while mucking around with a lexer. 
+use # to comment out a line or instruction.
+(warning. bug. DON'T leave a space before the comment. Lexer may interpret it as directory change)
+
+```
+s = '''
++:dir
+    file# some ignored text here
+    +plugins
+        +mail
+'''
+```
+
+
+
+To see planned features/goals see TODO.md
+
+
+## CLI
+
+You can use the CLI to read the version i.e.
+
+```
+$ python3 -m tree --version
+```
+
+
+## NOTES
+
+I came up with the idea while mucking around with a lexer. 
 
 https://www.dabeaz.com/ply/
 
 https://github.com/dabeaz/ply
 
-so am using this to do it.
 
+remember it executes from where your python thinks is the current dir.
+If you're unsure set it first. i.e.
 
-- remember it executes from where your python thinks is the current dir
-- if you're unsure set it first. i.e.
-
+```
 import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+```
 
+## DISCLAIMER
 
-## WARNING
+This is a work in progress. It creates and destroys files on your hard drive. So be careful.
 
 DON'T leave trailing negative space on lines. I use space to change dirs.
 
-uses 4 spaces not tabs. (I've not tested with tabs as my editor converts them to 4 spaces). will sort later.
+Use 4 spaces not tabs. (I've not tested with tabs as my editor converts them to 4 spaces). will sort later.
 
-this is a work in progress. it creates files on your hard drive. so be careful.
-
-if using a comment. don't leave space before the #
+if using a comment. Don't leave space before the #

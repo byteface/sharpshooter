@@ -5,6 +5,7 @@
 
 """
 
+import os
 import time
 import unittest
 from unittest.mock import Mock
@@ -63,7 +64,6 @@ class TestCase(unittest.TestCase):
         import os
         # change to project root
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
         tree(s1, test=True)
 
         # TODO: test that files now exist
@@ -73,6 +73,49 @@ class TestCase(unittest.TestCase):
         
         # check if files exist
         # self.assertTrue(os.path.isfile(os.path.join(os.getcwd(), 'plugins', 'mail', 'file3')))
+
+
+    def test_minus(self):
+    
+        # NOTE - should now handle being tabbed in.
+        s1 = """
+        +:dir
+            +plugins
+                file4
+                +mail
+        """
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        tree(s1, test=True)
+
+        # delete a file
+        s1 = """
+        +dir
+            +plugins
+                -file4
+        """
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        tree(s1, test=True)
+
+        # delete a folder
+        s1 = """
+        +dir
+            +plugins
+                -mail #removing this one
+            +addoneaswell   #test comments with space now too
+                test.png
+        """
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        tree(s1, test=True)
+
+        # test hypthon folder
+        s1 = """
+        +newdir123
+            +plug-ins_19
+                _test-12-3.png
+        """
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        tree(s1, test=True)
+
 
 
 if __name__ == '__main__':

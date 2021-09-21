@@ -1,5 +1,6 @@
 """
     tree (sharpshooter)
+    ====================================
 
     # instructional language for creating files and folders i.e
     +:dir
@@ -23,7 +24,16 @@
 
 """
 
+__version__ = "0.0.2"
+__license__ = 'MIT'
+__author__ = "@byteface"
+
+VERSION = __version__
+
 import os
+import shutil
+# import stat
+# import sys
 import ply.lex as lex
 
 
@@ -48,6 +58,11 @@ class Lex(object):
 
         self.start_tabs = 0  # if a whole block is indented, this is the number of tabs where to start from
         self.first = True # set to false after the first file or folder is created
+        
+        self.delete = False
+
+        self.is_extra = False # need maybe a better variable name.
+        # basically, if we are past the filename or dirname, we are in the extra stuff
 
         self.lexer = lex.lex(module=self)
     
@@ -74,12 +89,17 @@ class Lex(object):
         self.is_recursive = False # TODO - will need to be a 2nd pass as creation of all files is not complete
         self.skip = False
         self.is_root = True
+        self.delete = False
+        self.is_extra = False
 
     def t_PLUS(self, t):
         r'\+'
         self.is_dir = True
 
-    t_MINUS   = r'-'
+    def t_MINUS(self, t):
+        r'\-'
+        self.delete = True #TODO - test it doesn't remove hyphenated words
+
     t_TIMES   = r'\*'
     def t_WRITE(self, t):
         r'\<'
@@ -111,6 +131,8 @@ class Lex(object):
 
         # print('t_SPACE', t)
         # print(len(t.value))
+        if self.is_extra:
+            return # TODO - for now ignoring anything after the filename
 
         spaces = int(len(t.value)/4)
 
@@ -163,6 +185,8 @@ class Lex(object):
         if self.first:
             self.first = False
 
+        self.is_extra = True # lets the spacer know we are past the filename or dirname
+
         if not self.was_dir and self.skip:
             print('Syntax Error. You can only create things inside a folder. skipping', t)
             return
@@ -170,23 +194,38 @@ class Lex(object):
         if self.is_dir:
             folder_name = Lex._clean_name(t.value)
 
-            if not os.path.exists(os.path.join(self.cwd, folder_name)):
-                os.mkdir(os.path.join(self.cwd, folder_name))
-            else:
-                print('folder already exists')
+            if not self.delete:
+                if not os.path.exists(os.path.join(self.cwd, folder_name)):
+                    os.mkdir(os.path.join(self.cwd, folder_name))
+                else:
+                    print('folder already exists')
 
-            os.chdir(os.path.join(self.cwd, folder_name))
-            self.depth += 1
-            self.cwd = os.getcwd()
+                os.chdir(os.path.join(self.cwd, folder_name))
+                self.depth += 1
+                self.cwd = os.getcwd()
+            else:
+                Lex._remove_file_or_folder(os.path.join(self.cwd, folder_name))
+                # os.rmdir(os.path.join(self.cwd, folder_name))
+                # self.depth -= 1
+                # self.cwd = os.getcwd()
         else:
-            print(t.value)
+            # print(t.value)
             file_name = Lex._clean_name(t.value)
 
-            if not os.path.exists(os.path.join(self.cwd, file_name)):
-                with open(os.path.join(self.cwd, file_name), 'w') as f:
-                    f.write(t.value)
+            if not self.delete:
+                if not os.path.exists(os.path.join(self.cwd, file_name)):
+                    with open(os.path.join(self.cwd, file_name), 'w') as f:
+                        f.write(t.value)
+                else:
+                    print('file already exists')
             else:
-                print('file already exists')
+                try:
+                    # os.remove(os.path.join(self.cwd, file_name))
+                    Lex._remove_file_or_folder(os.path.join(self.cwd, file_name))
+                    return
+                except Exception as e:
+                    print('could not delete file', e)
+
 
     def t_error(self, t):
         print(f"Illegal character {t.value[0]!r}")
@@ -203,6 +242,31 @@ class Lex(object):
             [str]: [the name cleaned if necessary]
         """
         return name.replace('\n','').replace('\t','')
+
+    @staticmethod
+    def _remove_file_or_folder( path: str ):
+        # detect if its a file or folder
+        if os.path.isfile(path):
+            # remove it
+            os.remove(path)
+        elif os.path.isdir(path):
+            # remove it even if it has contents
+            shutil.rmtree(path)
+            # on windows
+            # os.system('rmdir /S /Q "{}"'.format(path))
+        else:
+            print('No file or folder could be found at', path)
+            pass
+
+    # @staticmethod
+    # def create_symbolic_link(path: str):
+
+
+    def __str__(self):
+        return f"Lexer: {self.cwd}"
+
+
+
 
 
 class tree(object):

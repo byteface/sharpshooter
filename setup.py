@@ -4,9 +4,9 @@ with open("README.md", "r") as f:
         long_description=f.read()
 
 
-# from domonic import __version__
-# version = __version__
-version = '0.0.1'
+from sharpshooter import __version__
+version = __version__
+# version = '0.0.1'
 
 setup(
   name='sharpshooter',
@@ -19,7 +19,7 @@ setup(
   description='Shorthand for creating files and folders.',
   long_description=long_description,
   long_description_content_type="text/markdown",
-  keywords=['shorthand', 'files', 'folders', 'filesytems', 'tree', 'template'],
+  keywords=['shorthand', 'files', 'folders', 'filesytem', 'tree', 'template', 'automation', 'mock', 'directory', 'mkdir', 'shutil'],
   python_requires='>=3.6',
   classifiers=[
       "Programming Language :: Python :: 3",

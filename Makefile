@@ -1,7 +1,7 @@
 # to run tests you can use test
 
 test:
-	python3 -m unittest tests.test_sharpshooter
+	python3 -m unittest tests.test_sharpshooter.TestCase.test_minus
 
 clean:
 	rm -r dir/

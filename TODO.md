@@ -1,18 +1,5 @@
 NOTE - non of this works. its all TODO. then if i get this working will go over to readme.md
 
-###deleting a file
-
-tree can also remove dirs and files. You guessed it. With the the - minus symbol
-
-```
-tree = ''' \
-+dir
-    +plugins
-         -mail
-'''
-```
-
-But be mindful that would also create the dir and plugins dir if they didn't exist.
 
 ###read only
 
@@ -27,20 +14,6 @@ tree = ''' \
 ```
 
 #TODO - return info about the file or dir
-
-##comments
-
-use # to comments out a line or instruction.
-(warning. bug. DON'T leave a space before the comment. Lexer will interpret it as directory change)
-
-```
-s = '''
-+:dir
-    file# > some text
-    +plugins
-        +mail
-'''
-```
 
 
 ##permissions #TODO - this isn't done yet. planning.
