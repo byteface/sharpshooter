@@ -100,7 +100,7 @@ To see planned features/goals see TODO.md
 You can use the CLI to read the version i.e.
 
 ```
-$ python3 -m tree --version
+$ python3 -m sharpshooter --version
 ```
 
 ## NOTES
