@@ -63,7 +63,6 @@ tree('''
 
 tree doesn't wait to be told. Your files are now there.
 
-
 ## deleting a file
 
 tree can also remove dirs and files. You guessed it. With the the - minus symbol
@@ -80,7 +79,6 @@ But be mindful that would also create the dir and plugins dir if they didn't exi
 
 tree will not ask twice. Your files are gone.
 
-
 ## comments
 
 use # to comment out a line or instruction.
@@ -95,10 +93,7 @@ s = '''
 '''
 ```
 
-
-
 To see planned features/goals see TODO.md
-
 
 ## CLI
 
@@ -107,7 +102,6 @@ You can use the CLI to read the version i.e.
 ```
 $ python3 -m tree --version
 ```
-
 
 ## NOTES
 
