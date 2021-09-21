@@ -2,9 +2,9 @@ name: Todo-to-Issue
 
 on:
   push:
-    branches: [ * ]
+    branches: [master]
   pull_request:
-    branches: [ * ]
+    branches: [master]
 
 jobs:
   todo-to-issue:
