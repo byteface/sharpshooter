@@ -98,7 +98,7 @@ class Lex(object):
 
     def t_MINUS(self, t):
         r'\-'
-        self.delete = True # TODO: - test it doesn't remove hyphenated words
+        self.delete = True # todo: - test it doesn't remove hyphenated words
 
     t_TIMES   = r'\*'
     def t_WRITE(self, t):
