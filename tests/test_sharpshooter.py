@@ -15,6 +15,7 @@ from unittest.mock import Mock
 
 from sharpshooter import tree
 
+# TODO - add asserts for all the functions
 
 class TestCase(unittest.TestCase):
 

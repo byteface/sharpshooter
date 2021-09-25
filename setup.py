@@ -3,10 +3,8 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as f:
         long_description=f.read()
 
-
 from sharpshooter import __version__
 version = __version__
-# version = '0.0.1'
 
 setup(
   name='sharpshooter',
@@ -16,10 +14,10 @@ setup(
   license="MIT",
   url='https://github.com/byteface/sharpshooter',
   download_url='https://github.com/byteface/sharpshooter/archive/' + version + ' .tar.gz',
-  description='Shorthand for creating files and folders.',
+  description='Easily create filesytems. A shorthand for creating files and folders. Create directory trees with ease',
   long_description=long_description,
   long_description_content_type="text/markdown",
-  keywords=['shorthand', 'files', 'folders', 'filesytem', 'tree', 'template', 'automation', 'mock', 'directory', 'mkdir', 'shutil'],
+  keywords=['shorthand', 'file', 'folder', 'filesytem', 'tree', 'template', 'automation', 'mock', 'directory', 'mkdir', 'shutil', 'system'],
   python_requires='>=3.6',
   classifiers=[
       "Programming Language :: Python :: 3",
