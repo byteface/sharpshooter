@@ -1,6 +1,9 @@
 # to run tests you can use test
 
 test:
+	python3 -m unittest tests.test_sharpshooter
+
+test_minus:
 	python3 -m unittest tests.test_sharpshooter.TestCase.test_minus
 
 clean:

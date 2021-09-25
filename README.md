@@ -8,7 +8,8 @@ tree could be written for any language.
 pip install sharpshooter
 ```
 
-## syntax
+## intro
+
 
 To create a plain empty file just type a word i.e.
 
@@ -43,7 +44,7 @@ putting it all together…
 		file.py
 ```
 
-## usage
+### Creating a tree
 
 ```
 from sharpshooter import tree
@@ -63,7 +64,7 @@ tree('''
 
 tree doesn't wait to be told. Your files are now there.
 
-## deleting a file
+### deleting a tree
 
 tree can also remove dirs and files. You guessed it. With the the - minus symbol
 
@@ -75,14 +76,26 @@ tree = ''' \
 '''
 ```
 
-But be mindful that would also create the dir and plugins dir if they didn't exist.
-
 tree will not ask twice. Your files are gone.
+
+But be mindful this example would also 'create' the dir and plugins folders if they didn't exist. Because tree by nature creates by default.
+
+To read info about a file or folder without creation use colon ':' to indicate read-only.
+
+```
+tree = ''' \
++:dir
+    +:plugins
+         -mail
+'''
+```
+
+More on colons : later.
 
 ## comments
 
 use # to comment out a line or instruction.
-(warning. bug. DON'T leave a space before the comment. Lexer may interpret it as directory change)
+(warning. bug. DON'T leave a space before the comment. Lexer may interpret it as directory change. THIS should be fixed. add more tests before removing this warning.)
 
 ```
 s = '''
@@ -92,6 +105,53 @@ s = '''
         +mail
 '''
 ```
+
+###read only
+
+To read info about a file or folder, without creating any, use a colon ':'
+
+You can the format the tree with an f-string to get the result which produces similir output as 'ls -al' on nix systems i.e.
+
+```
+test = tree('''
+:README.md
+''')
+print(f"{test}")
+# -rw-r--r-- byteface staff 2100 21 Sep 07:58 README.md
+```
+
+or for a directory...
+
+```
+test = tree('''
+:venv
+''')
+print(f"{test}")
+# drwxr-xr-x byteface staff 192 Mon Sep 20 10:18:44 2021 venv
+```
+
+Notice the little 'd' at the front lets you know it's a directory. Just like in a terminal.
+
+
+you can safely change change order of colon and plus i.e. will still work.
+
+```
+tree('''
+:+dont
+    :+make
+        :this
+''')
+```
+
+but i prefer to use the colon right before the file or folder name .i.e.
+
+tree('''
++:dont
+    +:make
+        :this
+''')
+
+up to you.
 
 To see planned features/goals see TODO.md
 
@@ -128,4 +188,4 @@ DON'T leave trailing negative space on lines. I use space to change dirs.
 
 Use 4 spaces not tabs. (I've not tested with tabs as my editor converts them to 4 spaces). will sort later.
 
-if using a comment. Don't leave space before the #
+When using a comment. Don't leave space before the # < note this one should be fixed.

@@ -118,5 +118,40 @@ class TestCase(unittest.TestCase):
 
 
 
+    def test_colon(self):
+        
+        # we want the same info
+        # -rw-r--r--@ 1 byteface  staff  2100 21 Sep 07:58 README.md        
+        
+        # To read info about a file or folder without creation use colon :
+
+        test = tree('''
+        :README.md
+        ''')
+        print(f"{test}")
+
+
+        test = tree('''
+        :venv
+        ''')
+        print(f"{test}")
+
+        # test not creating things by using colon
+        tree('''
+        +:dont
+            +:make
+                :this
+        ''')
+        # self.assertFalse(os.path.isdir(os.path.join(os.getcwd(), 'venv', 'test')))
+
+        # change order of colon and plus
+        tree('''
+        :+dont
+            :+make
+                :this
+        ''')
+
+
+
 if __name__ == '__main__':
     unittest.main()

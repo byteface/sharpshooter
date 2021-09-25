@@ -24,17 +24,111 @@
 
 """
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 __license__ = 'MIT'
 __author__ = "@byteface"
 
 VERSION = __version__
 
 import os
+import grp
+import pwd
 import shutil
 # import stat
 # import sys
 import ply.lex as lex
+
+
+
+def octal_to_text(octal):
+    """
+    convers an octal string to a text string
+    i.e.
+    777 -> rwxrwxrwx
+    """
+    text = ''
+    for i in range(len(octal)):
+        if octal[i] == '7':
+            text += 'rwx'
+        elif octal[i] == '6':
+            text += 'rw-'
+        elif octal[i] == '5':
+            text += 'r-x'
+        elif octal[i] == '4':
+            text += 'r--'
+        elif octal[i] == '3':
+            text += '-wx'
+        elif octal[i] == '2':
+            text += '-w-'
+        elif octal[i] == '1':
+            text += '--x'
+        elif octal[i] == '0':
+            text += '---'
+    return text
+
+
+
+def get_file_info(path, filename):
+    """
+    # get the same data as if doing ls -al
+    # -rw-r--r--@ 1 byteface  staff  2100 21 Sep 07:58 README.md        
+    """
+
+    fileinfo = {}
+    fileinfo['name'] = filename
+    fileinfo['path'] = os.path.join(path, filename)
+
+    fileinfo['is_dir'] = False
+    # detect if its a file or a directory
+    if os.path.isfile(fileinfo['path']):
+        fileinfo['is_dir'] = False
+    elif os.path.isdir(fileinfo['path']):
+        fileinfo['is_dir'] = True
+    else:
+        # raise Exception('File not found')
+        print('File not found:', filename)
+        return {}
+
+    stat = os.stat(fileinfo['path'])
+
+    # read the file permissions
+    perms = stat.st_mode
+    perms = oct(perms)
+    perms = perms[-3:]
+    fileinfo['perms'] = octal_to_text(perms)
+
+    # read the file owner
+    owner = stat.st_uid
+    # get the name of the owner
+    owner = pwd.getpwuid(owner)
+    owner = owner.pw_name
+    fileinfo['owner'] = owner
+
+    # read the file group
+    group = stat.st_gid
+    # get the name of the group
+    group = grp.getgrgid(group)
+    group = group.gr_name
+    fileinfo['group'] = group
+
+    # read the file size
+    size = stat.st_size
+    fileinfo['size'] = size
+
+    # read the file date
+    date = stat.st_mtime
+    # convert the date to a string in the format: 21 Sep 07:58
+    import time
+    date = time.ctime(date)
+    fileinfo['date'] = date
+
+    # read the file name
+    name = os.path.basename(fileinfo['path'])
+    fileinfo['name'] = name
+
+    tree.FILE_INFO = fileinfo
+
+    return fileinfo
 
 
 class Lex(object):
@@ -194,37 +288,54 @@ class Lex(object):
         if self.is_dir:
             folder_name = Lex._clean_name(t.value)
 
-            if not self.delete:
-                if not os.path.exists(os.path.join(self.cwd, folder_name)):
-                    os.mkdir(os.path.join(self.cwd, folder_name))
-                else:
-                    print('folder already exists')
+            if self.is_read_only:
+                # print('nothing can be created in this block')
+                # TODO - only if its the last item in the tree
+                get_file_info(self.cwd, folder_name)
+                # with open(fileinfo['path'], 'r') as f:
+                    # fileinfo['data'] = f.read()
 
-                os.chdir(os.path.join(self.cwd, folder_name))
-                self.depth += 1
-                self.cwd = os.getcwd()
             else:
-                Lex._remove_file_or_folder(os.path.join(self.cwd, folder_name))
-                # os.rmdir(os.path.join(self.cwd, folder_name))
-                # self.depth -= 1
-                # self.cwd = os.getcwd()
+                if not self.delete:
+                    if not os.path.exists(os.path.join(self.cwd, folder_name)):
+                        os.mkdir(os.path.join(self.cwd, folder_name))
+                    else:
+                        print('folder already exists')
+
+                    os.chdir(os.path.join(self.cwd, folder_name))
+                    self.depth += 1
+                    self.cwd = os.getcwd()
+                else:
+                    Lex._remove_file_or_folder(os.path.join(self.cwd, folder_name))
+                    # os.rmdir(os.path.join(self.cwd, folder_name))
+                    # self.depth -= 1
+                    # self.cwd = os.getcwd()
         else:
             # print(t.value)
             file_name = Lex._clean_name(t.value)
 
-            if not self.delete:
-                if not os.path.exists(os.path.join(self.cwd, file_name)):
-                    with open(os.path.join(self.cwd, file_name), 'w') as f:
-                        f.write(t.value)
-                else:
-                    print('file already exists')
+            if self.is_read_only:
+                # print('in the file block')
+                # TODO - only if its the last item in the tree
+                get_file_info(self.cwd, file_name)
+                
+                # with open(fileinfo['path'], 'r') as f:
+                    # fileinfo['data'] = f.read()
+
             else:
-                try:
-                    # os.remove(os.path.join(self.cwd, file_name))
-                    Lex._remove_file_or_folder(os.path.join(self.cwd, file_name))
-                    return
-                except Exception as e:
-                    print('could not delete file', e)
+                if not self.delete:
+                    if not os.path.exists(os.path.join(self.cwd, file_name)):
+                        with open(os.path.join(self.cwd, file_name), 'w') as f:
+                            f.write(t.value)
+                    else:
+                        print('file already exists')
+                else:
+                    try:
+                        # os.remove(os.path.join(self.cwd, file_name))
+                        Lex._remove_file_or_folder(os.path.join(self.cwd, file_name))
+                        return
+                    except Exception as e:
+                        print('could not delete file', e)
 
 
     def t_error(self, t):
@@ -266,10 +377,42 @@ class Lex(object):
         return f"Lexer: {self.cwd}"
 
 
-
-
-
 class tree(object):
+
+    # stores read info
+    FILE_INFO = None
+
+    def __str__(self):
+        return tree.FILE_INFO
+
+    # def __repr__(self):
+    #     return tree.FILE_INFO
+
+    def __format__(self, *args, **kwargs):
+        # return tree.FILE_INFO
+        # TODO - format the output to look like ls -al
+        # -rw-r--r--@ 1 byteface  staff  2100 21 Sep 07:58 README.md
+        # print('info::', tree.FILE_INFO)
+        outp = ''
+        if tree.FILE_INFO is not None:
+            if tree.FILE_INFO['is_dir']:
+                outp += 'd'
+            else:
+                outp += '-'
+            outp += tree.FILE_INFO['perms']
+            outp += ' '
+            outp += str(tree.FILE_INFO['owner'])
+            outp += ' '
+            outp += str(tree.FILE_INFO['group'])
+            outp += ' '
+            outp += str(tree.FILE_INFO['size'])
+            outp += ' '
+            outp += str(tree.FILE_INFO['date'])
+            outp += ' '
+            outp += str(tree.FILE_INFO['name'])
+            outp += '\n'
+        return outp
+
 
     def __init__(self, tree_string: str, test: bool = False):
         """

@@ -1,22 +1,27 @@
-NOTE - non of this works. its all TODO. then if i get this working will go over to readme.md
+NOTE - non of this works. its all 'TODO'. 
+Anything working will go over to readme.md once added as a feature. consider all of these tickets.
 
 
-###read only
+## test mode
 
-To read info about a file or folder without creation use colon :
-
-```
-tree = ''' \
-+:dir
-    +:plugins
-        :mail
-'''
-```
-
-#TODO - return info about the file or dir
+- need a mode that outputs what it would do, but doesn't actually do it.
 
 
-##permissions #TODO - this isn't done yet. planning.
+## quiet mode
+
+- needs a mode that doesn't throw any warnings. (solvable with a logger)
+- maybe also a verbose mode that produces a report in a file.
+
+
+###read only - (more)
+
+- tree should hold the file object for introspection to access files in a directory for example.
+
+- directory output should probably also show contained files.
+
+
+
+##permissions #TODO - this isn't done yet. planning. (may need a 2nd pass for perms)
 
 You can set owners/permissions on the folders as you build them with =. For recursion multiply *
 
@@ -44,6 +49,8 @@ s = '''
 '''
 ```
 
+So don't use a minus to 'see what will happen'. Make sure you know what is being removed.
+
 
 TODO - To write a string to a file use <, >, <<, >>
 
@@ -56,6 +63,8 @@ TODO - To write a string to a file use <, >, <<, >>
 
 ##CLI
 #TODO
+
+
 
 
 ## TIPS
@@ -78,3 +87,15 @@ tree = f''' \
 '''
 ```
 
+
+## CLI
+
+- various additions added as comments in the __main__.py file.
+- ¥ needs to be pasted in terimnal . find an other shortcut symbol
+
+
+
+
+## grep (much later)
+
+- maybe do some shorthand searching?

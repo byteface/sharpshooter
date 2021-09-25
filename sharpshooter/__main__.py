@@ -1,5 +1,5 @@
 """
-    tree (sharpshooter) CLI entry point.
+    ¥ tree (sharpshooter) CLI entry point.
     ====================================
 
 """
@@ -11,11 +11,16 @@ def parse_args():
     parser = argparse.ArgumentParser(add_help=False,
                                      prog="sharpshooter",
                                      usage="%(prog)s [options]",
-                                     description="Generate filesystems Python 3")
+                                     description="Generate filesystems with Python 3")
     
     # parser.add_argument('-h', '--help', action='store_true')
     parser.add_argument('-v', '--version', action='store_true')
-    
+    # parser.add_argument('-d', '--debug', action='store_true')
+    # parser.add_argument('-q', '--quiet', action='store_true')
+    # parser.add_argument('-c', '--config', action='store')    
+    # parser.add_argument('-i', '--input', action='store_true') # create trees from terminal input
+
+
     args = parser.parse_args()
     return args
 
