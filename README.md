@@ -1,8 +1,16 @@
 ## tree (sharpshooter)
 
+[![PyPI version](https://badge.fury.io/py/sharpshooter.svg)](https://badge.fury.io/py/sharpshooter.svg) 
+[![Downloads](https://pepy.tech/badge/sharpshooter)](https://pepy.tech/project/sharpshooter)
+[![Python version](https://img.shields.io/pypi/pyversions/sharpshooter.svg?style=flat)](https://img.shields.io/pypi/pyversions/sharpshooter.svg?style=flat)
+[![Python package](https://github.com/byteface/sharpshooter/actions/workflows/python-package.yml/badge.svg?branch=master)](https://github.com/byteface/sharpshooter/actions/workflows/python-package.yml)
+
+
+
 Shorthand templates for creating (or destroying) file-systems.
 
 tree could be written for any language.
+
 
 ```
 pip install sharpshooter
@@ -110,7 +118,7 @@ s = '''
 
 To read info about a file or folder, without creating any, use a colon ':'
 
-You can the format the tree with an f-string to get the result which produces similir output as 'ls -al' on nix systems i.e.
+You can then format the tree with an f-string to get the result which produces similir output as 'ls -al' on nix systems i.e.
 
 ```
 test = tree('''
@@ -145,11 +153,13 @@ tree('''
 
 but i prefer to use the colon right before the file or folder name .i.e.
 
+```
 tree('''
 +:dont
     +:make
         :this
 ''')
+```
 
 up to you.
 

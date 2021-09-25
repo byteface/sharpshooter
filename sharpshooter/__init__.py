@@ -31,7 +31,6 @@ __author__ = "@byteface"
 VERSION = __version__
 
 import os
-import grp
 import pwd
 import shutil
 # import stat
@@ -106,9 +105,33 @@ def get_file_info(path, filename):
 
     # read the file group
     group = stat.st_gid
-    # get the name of the group
-    group = grp.getgrgid(group)
-    group = group.gr_name
+    
+    try:
+        import grp
+        group = grp.getgrgid(group)
+        group = group.gr_name
+    except ModuleNotFoundError:
+        # on windows try something else?
+        # import win32api
+        # group = win32api.GetUserName()
+        # on windows try something else only using builtin functions
+        # import getpass
+        # group = getpass.getuser()
+        group = stat.st_gid
+        print('WINDOWS TEST:::::', group)
+
+
+        from pathlib import Path
+        path = Path(fileinfo['path'])
+        owner = path.owner()
+        group = path.group()
+        print(f"{path.name} is owned by {owner}:{group}")
+
+    except:
+        # group = 'unknown' # leave it as the stat.st_gid
+        group = stat.st_gid
+        pass
+    
     fileinfo['group'] = group
 
     # read the file size
