@@ -108,11 +108,11 @@ def get_file_info(path, filename):
         owner = stat.st_uid
         print('WINDOWS TEST:::::', owner)
 
-        from pathlib import Path
-        path = Path(fileinfo['path'])
-        owner = path.owner()
-        group = path.group()
-        print(f"{path.name} is owned by {owner}:{group}")
+        # from pathlib import Path
+        # path = Path(fileinfo['path'])
+        # owner = path.owner()
+        # group = path.group()
+        # print(f"{path.name} is owned by {owner}:{group}")
 
     except:
         # group = 'unknown' # leave it as the stat.st_gid
@@ -139,11 +139,11 @@ def get_file_info(path, filename):
         print('WINDOWS TEST:::::', group)
 
 
-        from pathlib import Path
-        path = Path(fileinfo['path'])
-        owner = path.owner()
-        group = path.group()
-        print(f"{path.name} is owned by {owner}:{group}")
+        # from pathlib import Path
+        # path = Path(fileinfo['path'])
+        # owner = path.owner()
+        # group = path.group()
+        # print(f"{path.name} is owned by {owner}:{group}")
 
     except:
         # group = 'unknown' # leave it as the stat.st_gid
