@@ -59,9 +59,7 @@ class TestCase(unittest.TestCase):
             file1# this is a file
         file2
         """
-
-
-
+    
         import os
         # change to project root
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -70,10 +68,10 @@ class TestCase(unittest.TestCase):
         # TODO: test that files now exist
 
         # check if dir exists
-        # self.assertTrue(os.path.isdir(os.path.join(os.getcwd(), 'plugins')))
+        self.assertTrue(os.path.isdir(os.path.join(os.getcwd(), 'plugins')))
         
         # check if files exist
-        # self.assertTrue(os.path.isfile(os.path.join(os.getcwd(), 'plugins', 'mail', 'file3')))
+        self.assertTrue(os.path.isfile(os.path.join(os.getcwd(), 'plugins', 'mail', 'file3')))
 
 
     def test_minus(self):
