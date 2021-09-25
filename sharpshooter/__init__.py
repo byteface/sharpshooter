@@ -106,7 +106,7 @@ def get_file_info(path, filename):
         owner = owner.pw_name
     except ModuleNotFoundError:
         owner = stat.st_uid
-        print('WINDOWS TEST:::::', group)
+        print('WINDOWS TEST:::::', owner)
 
         from pathlib import Path
         path = Path(fileinfo['path'])
