@@ -31,7 +31,7 @@ __author__ = "@byteface"
 VERSION = __version__
 
 import os
-import pwd
+# import pwd
 import shutil
 # import stat
 # import sys
@@ -98,9 +98,27 @@ def get_file_info(path, filename):
 
     # read the file owner
     owner = stat.st_uid
-    # get the name of the owner
-    owner = pwd.getpwuid(owner)
-    owner = owner.pw_name
+    
+    try:
+        import pwd
+        # get the name of the owner
+        owner = pwd.getpwuid(owner)
+        owner = owner.pw_name
+    except ModuleNotFoundError:
+        owner = stat.st_uid
+        print('WINDOWS TEST:::::', group)
+
+        from pathlib import Path
+        path = Path(fileinfo['path'])
+        owner = path.owner()
+        group = path.group()
+        print(f"{path.name} is owned by {owner}:{group}")
+
+    except:
+        # group = 'unknown' # leave it as the stat.st_gid
+        owner = stat.st_uid
+        pass
+    
     fileinfo['owner'] = owner
 
     # read the file group
