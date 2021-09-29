@@ -77,7 +77,7 @@ tree doesn't wait to be told. Your files are now there.
 tree can also remove dirs and files. You guessed it. With the the - minus symbol
 
 ```
-tree = ''' \
+tree = '''
 +dir
     +plugins
          -mail
@@ -91,7 +91,7 @@ But be mindful this example would also 'create' the dir and plugins folders if t
 To read info about a file or folder without creation use colon ':' to indicate read-only.
 
 ```
-tree = ''' \
+tree = '''
 +:dir
     +:plugins
          -mail
@@ -114,7 +114,7 @@ s = '''
 '''
 ```
 
-###read only
+## read only
 
 To read info about a file or folder, without creating any, use a colon ':'
 
@@ -163,6 +163,31 @@ tree('''
 
 up to you.
 
+
+## test mode
+
+If you are feeling unsure. Try tree in test mode.
+
+It will log what it would do to the console but won't actually create any files or folders.
+
+You just have to past test=True to the tree function. i.e
+
+```
+mytree = '''
++somedir
+    +anotherdir
+        someotherfile.png
+    file.txt
+    file2.gif
+'''
+
+tree(mytree, test=True)  # notice how we set test=True
+
+```
+
+Now you can check the console and if you feel confident set test=False and run the code again.
+
+
 To see planned features/goals see TODO.md
 
 ## CLI
@@ -190,7 +215,7 @@ import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 ```
 
-## DISCLAIMER
+## DISCLAIMER / known bugs
 
 This is a work in progress. It creates and destroys files on your hard drive. So be careful.
 
@@ -199,3 +224,5 @@ DON'T leave trailing negative space on lines. I use space to change dirs.
 Use 4 spaces not tabs. (I've not tested with tabs as my editor converts them to 4 spaces). will sort later.
 
 When using a comment. Don't leave space before the # < note this one should be fixed.
+
+no spaces allowed in files or folders names at the moment.

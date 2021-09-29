@@ -45,14 +45,14 @@ class TestCase(unittest.TestCase):
         s1 = """
         +:dir
             +plugins
-                +mail
+                +:mail
                     file3
                     +things
                         +again
-                            file8
+                            :file8
                             file9.txt
                         file7
-                    +more
+                    +:more
                         file6
                 file4
                     file5# comments are not allowed spaces before them yet. causes wrong directory
@@ -63,15 +63,18 @@ class TestCase(unittest.TestCase):
         import os
         # change to project root
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
-        tree(s1, test=True)
+        tree(s1, test=False)
 
         # TODO: test that files now exist
 
         # check if dir exists
-        self.assertTrue(os.path.isdir(os.path.join(os.getcwd(), 'plugins')))
+        self.assertTrue(os.path.isdir(os.path.join(os.getcwd(), 'dir')))
+
+        # make sure plugins is inside dir
+        self.assertFalse(os.path.isdir(os.path.join(os.getcwd(), 'plugins')))
         
         # check if files exist
-        self.assertTrue(os.path.isfile(os.path.join(os.getcwd(), 'plugins', 'mail', 'file3')))
+        # self.assertTrue(os.path.isfile(os.path.join(os.getcwd(), 'dir/plugins', 'mail', 'file3')))
 
 
     def test_minus(self):
@@ -150,6 +153,77 @@ class TestCase(unittest.TestCase):
                 :this
         ''')
 
+
+    def test_testmode(self):
+        
+        # test mode true. things wont get created
+        s1 = """
+        +DONT
+            +MAKE
+                me.png
+                +or
+                    +this
+                        +or
+                            this.png
+                            that.gif
+            +WE
+                +DONT
+                    +make
+                        things.png
+                        +this
+            +test
+                +mode
+                    +wont
+                        +make
+                            things.png
+        """
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        tree(s1, test=True)
+
+    def test_testmode_not_delete(self):
+        
+        # same code as test mode. things will get created
+        s1 = """
+        +DONT
+            +MAKE
+                me.png
+                +or
+                    +this
+                        +or
+                            this.png
+                            that.gif
+            +WE
+                +DONT
+                    +make
+                        things.png
+                        +this
+            +test
+                +mode
+                    +wont
+                        +make
+                            things.png
+        """
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        tree(s1, test=False)
+
+        # print('delete it')
+        # aggressively delete the DON'T folder
+        s2 = """
+        -DONT
+        """
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        tree(s2, test=False)
+        # print('DONE!')
+
+
+    def test_folders_with_spaces(self):
+        # As much as I hate this. It's pefectly legal.
+        s1 = """
+        +MAKE THIS FOLDER
+            and This file.png
+        """
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        tree(s1, test=False)
 
 
 if __name__ == '__main__':

@@ -1,11 +1,7 @@
 NOTE - non of this works. its all 'TODO'. 
 Anything working will go over to readme.md once added as a feature. consider all of these tickets.
 
-
-## test mode
-
-- need a mode that outputs what it would do, but doesn't actually do it.
-
+# - TODO - testmode . should also report if it would have failed/succeeded.
 
 ## quiet mode
 

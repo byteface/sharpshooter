@@ -35,6 +35,50 @@ import shutil
 import ply.lex as lex
 
 
+# class FileStream():
+
+#     def __init__(self, input: str, output: str):
+#         # detect whether it is a file or a url
+#         if input.startswith("http"):
+#             self.input = input
+#             self.is_url = True
+#         else:
+#             self.input = input
+#             self.is_url = False
+
+#         # check if input is a file if not it is just a string
+#         self.data = None
+#         self.output = output
+#         self.read()
+#         self.write()
+    
+#     def read(self):
+#         """
+#         reads data from the file
+#         """
+#         if self.is_url:
+#             import urllib.request
+#             self.data = urllib.request.urlopen(self.input).read()
+#         else:
+#             with open(self.input, 'r') as f:
+#                 self.data = f.read()
+#         return self.data
+    
+#     def write(self, path=None):
+#         """[write the data to the path]
+
+#         Args:
+#             path ([str], optional): [optional overwites the constructors output]
+#         """
+#         if path is None:
+#             path = self.output
+#         with open(path, 'w') as f:
+#             f.write(path)
+
+#     def __str__(self):
+#         return self.data
+
+
 def sslog(msg: str, *args, **kwargs):
     ''' logging for sharpshooter '''
 
@@ -201,6 +245,9 @@ class Lex(object):
         self.is_extra = False  # need maybe a better variable name.
         # basically, if we are past the filename or dirname, we are in the extra stuff
 
+        self.is_dead = False  # if a dir fails to create, we can mark it as dead
+        self.dead_depth = 0  # the depth of the dead dir
+
         self.lexer = lex.lex(module=self)
 
     tokens = (
@@ -236,6 +283,7 @@ class Lex(object):
         self.is_root = True
         self.delete = False
         self.is_extra = False
+        # self.is_dead = False
 
     def t_PLUS(self, t):
         r"\+"
@@ -299,6 +347,18 @@ class Lex(object):
         Args:
             spaces ([int]): [how many steps to move back up the directory tree]
         """
+
+        # if spaces == 0:
+        #     return
+
+        # if spaces < 0:
+        #     print("ERROR: move back negative")
+        #     return
+
+        # if self.is_root:
+        #     print("ERROR: move back from root")
+        #     return
+
         self.is_root = False  # hacky. it wont get called if no space
         self.last_tab_count = self.tab_count
         self.tab_count = self.depth - spaces
@@ -308,10 +368,28 @@ class Lex(object):
             sslog("Error. You can only put things in folders")
             return
 
+        print('MOVING BACK')
+        if self.is_dead:
+            # self.depth = self.tab_count
+            # self.is_root = False  # hacky. it wont get called if no space    
+            # path_parent = os.path.dirname(self.cwd)
+            # self.cwd = path_parent
+            # self.depth = self.tab_count
+            # print(self.depth,self.tab_count)
+            self.depth = spaces
+            return
+
         while self.tab_count > 0:
-            path_parent = os.path.dirname(os.getcwd())
-            os.chdir(path_parent)
-            self.cwd = os.getcwd()
+            
+            if tree.TEST_MODE:
+                # note - in test mode we can't change dirs so have to build cwd manually
+                path_parent = os.path.dirname(self.cwd)
+                self.cwd = path_parent
+            else:
+                path_parent = os.path.dirname(os.getcwd())
+                os.chdir(path_parent)
+                self.cwd = os.getcwd()
+
             self.depth -= 1
             self.tab_count -= 1
 
@@ -321,11 +399,15 @@ class Lex(object):
     t_RPAREN = r"\)"
 
     def t_FILE(self, t):
-        r"[a-zA-Z_][a-zA-Z_0-9.\-]*"
+        # r"[a-zA-Z_][a-zA-Z_0-9.\-]*" # v1- doesn't allows spaces in filenames 
+        r"[a-zA-Z_][a-zA-Z_0-9.\-]*([\w. ]*)"
+        
         if self.cwd is None:
+            print('change dir11')
             self.cwd = os.getcwd()
 
         if self.is_root:
+            print('change dir22')
             os.chdir(self.root)
             self.cwd = os.getcwd()
 
@@ -333,6 +415,20 @@ class Lex(object):
             self.first = False
 
         self.is_extra = True  # lets the spacer know we are past the filename or dirname
+
+        if self.is_dead:
+            print( self.cwd )
+            if self.depth <= self.dead_depth:
+                sslog(self.depth, self.dead_depth)
+                sslog("Same depth as previous dead dir. no longer dead:", t.value)
+                self.is_dead = False
+                # self.depth = self.dead_depth
+                self.dead_depth = 0
+
+                print( self.cwd )
+            else:
+                sslog("Skipping dead dir", t.value)
+                return
 
         if not self.was_dir and self.skip:
             sslog(
@@ -350,10 +446,43 @@ class Lex(object):
                 # with open(fileinfo['path'], 'r') as f:
                 # fileinfo['data'] = f.read()
 
+                try:
+                    # if not the last line still need to navigate into it if it exists.
+                    # also if not then stop nest ones being created also
+                    os.chdir(os.path.join(self.cwd, folder_name))  # this should now error if it doesn't exist
+                    self.depth += 1
+                    self.cwd = os.getcwd()
+                except FileNotFoundError as e:
+                    sslog(f"""Folder '{folder_name}' not created. read_only. 
+
+                    remove the colon from the line if you want to create the folder
+                    
+                    """)
+                    # raise e
+                    self.is_dead = True
+                    self.dead_depth = self.depth
+                    # if self.depth == 0:
+                        # self.is_dead = False
+                        # self.dead_depth = 0 # hacky
+                    self.depth += 1
+                    # self.cwd = os.getcwd()
+                    
+                    return
+
             else:
                 if not self.delete:
                     if not os.path.exists(os.path.join(self.cwd, folder_name)):
-                        os.mkdir(os.path.join(self.cwd, folder_name))
+
+                        if tree.TEST_MODE:
+                            # TODO - doesn't windows have backslash?
+                            sslog(f"TEST_MODE: create folder: {self.cwd}/{folder_name}")
+                            self.depth += 1
+                            self.cwd += f"/{folder_name}"
+                            return
+                        else:
+                            os.mkdir(os.path.join(self.cwd, folder_name))
+                            sslog("created folder", folder_name)
+                        # os.mkdir(os.path.join(self.cwd, folder_name))
                     else:
                         sslog("folder already exists")
 
@@ -379,11 +508,17 @@ class Lex(object):
 
             else:
                 if not self.delete:
-                    if not os.path.exists(os.path.join(self.cwd, file_name)):
-                        with open(os.path.join(self.cwd, file_name), "w") as f:
-                            f.write(t.value)
+
+                    if tree.TEST_MODE:
+                        # TODO - doesn't windows have backslash? test on my other machine later
+                        sslog(f"TEST_MODE: create file: {self.cwd}/{file_name}")
                     else:
-                        sslog("file already exists")
+                        if not os.path.exists(os.path.join(self.cwd, file_name)):
+                            with open(os.path.join(self.cwd, file_name), "w") as f:
+                                f.write(t.value)
+                        else:
+                            sslog("file already exists")
+
                 else:
                     try:
                         # os.remove(os.path.join(self.cwd, file_name))
@@ -410,6 +545,11 @@ class Lex(object):
 
     @staticmethod
     def _remove_file_or_folder(path: str):
+
+        if tree.TEST_MODE:
+            sslog(f"TEST_MODE: removing file: {path}")
+            return
+
         # detect if its a file or folder
         if os.path.isfile(path):
             # remove it
@@ -434,7 +574,7 @@ class tree(object):
 
     TEST_MODE = False  # wont actually create files
     QUIET_MODE = False  # suppress all logs
-    VERBOSE_MODE = False  # output logs to file
+    VERBOSE_MODE = False  # outputut logs to file
 
     # stores read info
     FILE_INFO = None
@@ -447,28 +587,28 @@ class tree(object):
 
     def __format__(self, *args, **kwargs):
         # return tree.FILE_INFO
-        # TODO - format the output to look like ls -al
+        # TODO - format the outputut to look like ls -al
         # -rw-r--r--@ 1 byteface  staff  2100 21 Sep 07:58 README.md
         # print('info::', tree.FILE_INFO)
-        outp = ""
+        output = ""
         if tree.FILE_INFO is not None:
             if tree.FILE_INFO["is_dir"]:
-                outp += "d"
+                output += "d"
             else:
-                outp += "-"
-            outp += tree.FILE_INFO["perms"]
-            outp += " "
-            outp += str(tree.FILE_INFO["owner"])
-            outp += " "
-            outp += str(tree.FILE_INFO["group"])
-            outp += " "
-            outp += str(tree.FILE_INFO["size"])
-            outp += " "
-            outp += str(tree.FILE_INFO["date"])
-            outp += " "
-            outp += str(tree.FILE_INFO["name"])
-            outp += "\n"
-        return outp
+                output += "-"
+            output += tree.FILE_INFO["perms"]
+            output += " "
+            output += str(tree.FILE_INFO["owner"])
+            output += " "
+            output += str(tree.FILE_INFO["group"])
+            output += " "
+            output += str(tree.FILE_INFO["size"])
+            output += " "
+            output += str(tree.FILE_INFO["date"])
+            output += " "
+            output += str(tree.FILE_INFO["name"])
+            output += "\n"
+        return output
 
     def __init__(self, tree_string: str, test: bool = False):
         """
@@ -480,6 +620,9 @@ class tree(object):
         """
         tree.TEST_MODE = test
         tree_string = tree_string.replace("\t", "    ")  # force tabs to 4 spaces
+
+        if tree.TEST_MODE:
+            sslog(f"TEST_MODE is active. Changes will not be applied.")
 
         self.lexer = Lex()
         self.lexer.lexer.input(tree_string)
