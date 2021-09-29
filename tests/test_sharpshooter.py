@@ -43,7 +43,7 @@ class TestCase(unittest.TestCase):
 
 # NOTE - should now handle being tabbed in.
         s1 = """
-        +:dir
+        +dir
             +plugins
                 +:mail
                     file3

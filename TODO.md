@@ -2,6 +2,7 @@ NOTE - non of this works. its all 'TODO'.
 Anything working will go over to readme.md once added as a feature. consider all of these tickets.
 
 # - TODO - testmode . should also report if it would have failed/succeeded.
+# - TODO - testmode . should also report on colons.
 
 ## quiet mode
 

@@ -188,7 +188,13 @@ tree(mytree, test=True)  # notice how we set test=True
 Now you can check the console and if you feel confident set test=False and run the code again.
 
 
+## Anything else?
+
+- you can now have spaces in filenames.
+
+
 To see planned features/goals see TODO.md
+
 
 ## CLI
 
@@ -225,4 +231,3 @@ Use 4 spaces not tabs. (I've not tested with tabs as my editor converts them to 
 
 When using a comment. Don't leave space before the # < note this one should be fixed.
 
-no spaces allowed in files or folders names at the moment.

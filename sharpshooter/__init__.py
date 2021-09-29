@@ -368,14 +368,7 @@ class Lex(object):
             sslog("Error. You can only put things in folders")
             return
 
-        print('MOVING BACK')
         if self.is_dead:
-            # self.depth = self.tab_count
-            # self.is_root = False  # hacky. it wont get called if no space    
-            # path_parent = os.path.dirname(self.cwd)
-            # self.cwd = path_parent
-            # self.depth = self.tab_count
-            # print(self.depth,self.tab_count)
             self.depth = spaces
             return
 
@@ -403,11 +396,9 @@ class Lex(object):
         r"[a-zA-Z_][a-zA-Z_0-9.\-]*([\w. ]*)"
         
         if self.cwd is None:
-            print('change dir11')
             self.cwd = os.getcwd()
 
         if self.is_root:
-            print('change dir22')
             os.chdir(self.root)
             self.cwd = os.getcwd()
 
@@ -417,7 +408,7 @@ class Lex(object):
         self.is_extra = True  # lets the spacer know we are past the filename or dirname
 
         if self.is_dead:
-            print( self.cwd )
+            # print( self.cwd )
             if self.depth <= self.dead_depth:
                 sslog(self.depth, self.dead_depth)
                 sslog("Same depth as previous dead dir. no longer dead:", t.value)
@@ -425,7 +416,7 @@ class Lex(object):
                 # self.depth = self.dead_depth
                 self.dead_depth = 0
 
-                print( self.cwd )
+                # print( self.cwd )
             else:
                 sslog("Skipping dead dir", t.value)
                 return
