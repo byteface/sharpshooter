@@ -466,9 +466,9 @@ class Lex(object):
 
                         if tree.TEST_MODE:
                             # TODO - doesn't windows have backslash?
-                            sslog(f"TEST_MODE: create folder: {self.cwd}/{folder_name}")
+                            sslog(f"TEST_MODE: create folder: {self.cwd}{os.sep}{folder_name}")
                             self.depth += 1
-                            self.cwd += f"/{folder_name}"
+                            self.cwd += f"{os.sep}{folder_name}"
                             return
                         else:
                             os.mkdir(os.path.join(self.cwd, folder_name))
@@ -502,7 +502,7 @@ class Lex(object):
 
                     if tree.TEST_MODE:
                         # TODO - doesn't windows have backslash? test on my other machine later
-                        sslog(f"TEST_MODE: create file: {self.cwd}/{file_name}")
+                        sslog(f"TEST_MODE: create file: {self.cwd}{os.sep}{file_name}")
                     else:
                         if not os.path.exists(os.path.join(self.cwd, file_name)):
                             with open(os.path.join(self.cwd, file_name), "w") as f:
