@@ -564,7 +564,7 @@ class Lex(object):
 class tree(object):
 
     TEST_MODE = False  # wont actually create files
-    QUIET_MODE = False  # suppress all logs
+    QUIET_MODE = False  # TODO suppress all logs
     VERBOSE_MODE = False  # outputut logs to file
 
     # stores read info
