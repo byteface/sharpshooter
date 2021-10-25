@@ -1,23 +1,19 @@
-## tree (sharpshooter)
+# tree (sharpshooter)
 
 [![PyPI version](https://badge.fury.io/py/sharpshooter.svg)](https://badge.fury.io/py/sharpshooter.svg) 
 [![Downloads](https://pepy.tech/badge/sharpshooter)](https://pepy.tech/project/sharpshooter)
 [![Python version](https://img.shields.io/pypi/pyversions/sharpshooter.svg?style=flat)](https://img.shields.io/pypi/pyversions/sharpshooter.svg?style=flat)
 [![Python package](https://github.com/byteface/sharpshooter/actions/workflows/python-package.yml/badge.svg?branch=master)](https://github.com/byteface/sharpshooter/actions/workflows/python-package.yml)
 
-
-
 Shorthand templates for creating (or destroying) file-systems.
 
 tree could be written for any language.
-
 
 ```
 pip install sharpshooter
 ```
 
 ## intro
-
 
 To create a plain empty file just type a word i.e.
 
@@ -46,10 +42,10 @@ putting it all together…
     +plugins
     +mail
         +vendor
-	    index.html
+        index.html
             +something
-		file.py
-		file.py
+        file.py
+        file.py
 ```
 
 ### Creating a tree
@@ -63,10 +59,10 @@ tree('''
     +plugins
         +mail
             +vendor
-	       index.html
-               +something
-		  file.py
-		  file.py
+            index.html
+                +something
+            file.py
+        file2.py
 ''')
 ```
 
@@ -187,10 +183,9 @@ tree(mytree, test=True)  # notice how we set test=True
 
 Now you can check the console and if you feel confident set test=False and run the code again.
 
-
 ## tilde
 
-home user path support. (* TODO - not yet tested on pc)
+users home path is supported. (* TODO - not yet tested on pc)
 
 ```
     s1 = """
@@ -203,14 +198,11 @@ home user path support. (* TODO - not yet tested on pc)
     tree(s1, test=False)
 ```
 
-
 ## Anything else?
 
 - you can now have spaces in filenames.
 
-
 To see planned features/goals see TODO.md
-
 
 ## CLI
 
@@ -227,7 +219,6 @@ I came up with the idea while mucking around with a lexer.
 https://www.dabeaz.com/ply/
 
 https://github.com/dabeaz/ply
-
 
 remember it executes from where your python thinks is the current dir.
 If you're unsure set it first. i.e.

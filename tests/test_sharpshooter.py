@@ -235,15 +235,15 @@ class TestCase(unittest.TestCase):
     #     tree(s1, test=False)
 
 
-    def test_tilde(self):
-        s1 = """
-        :+~
-            test.png
-            +somedir
-                somescript.py
-        """
-        tree(s1, test=True)
-        tree(s1, test=False)
+    # def test_tilde(self):
+    #     s1 = """
+    #     :+~
+    #         test.png
+    #         +somedir
+    #             somescript.py
+    #     """
+    #     tree(s1, test=True)
+    #     tree(s1, test=False)
 
     # def test_paths(self):
     #     s1 = """

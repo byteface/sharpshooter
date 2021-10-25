@@ -236,7 +236,7 @@ class Lex(object):
         self.is_test = False
         self.tab_count = 0
         self.last_tab_count = 0
-        self.is_user_home = True # tilde handler
+        self.is_user_home = False # tilde handler
 
         self.start_tabs = 0  # if a whole block is indented, this is the number of tabs where to start from
         self.first = True  # set to false after the first file or folder is created
