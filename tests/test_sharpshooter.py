@@ -226,5 +226,32 @@ class TestCase(unittest.TestCase):
         tree(s1, test=False)
 
 
+    # def test_chmod(self):
+    #     s1 = """
+    #     +MAKE THIS FOLDER
+    #         and This file.png =644 # this will be tough/impossible? to parse. i.e that could literally be the full filename
+    #     """
+    #     os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    #     tree(s1, test=False)
+
+
+    def test_tilde(self):
+        s1 = """
+        :+~
+            test.png
+            +somedir
+                somescript.py
+        """
+        tree(s1, test=True)
+        tree(s1, test=False)
+
+    # def test_paths(self):
+    #     s1 = """
+    #     :+/var/www/html/
+    #         test.png
+    #         somedir/somescript.py
+    #     """
+
+
 if __name__ == '__main__':
     unittest.main()

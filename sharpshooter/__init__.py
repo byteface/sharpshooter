@@ -24,7 +24,7 @@
 
 """
 
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 __license__ = "MIT"
 __author__ = "@byteface"
 
@@ -236,6 +236,7 @@ class Lex(object):
         self.is_test = False
         self.tab_count = 0
         self.last_tab_count = 0
+        self.is_user_home = True # tilde handler
 
         self.start_tabs = 0  # if a whole block is indented, this is the number of tabs where to start from
         self.first = True  # set to false after the first file or folder is created
@@ -250,6 +251,7 @@ class Lex(object):
 
         self.lexer = lex.lex(module=self)
 
+
     tokens = (
         "FILE",
         "PLUS",
@@ -263,6 +265,7 @@ class Lex(object):
         "LPAREN",
         "RPAREN",
         "COMMENT",
+        "TILDE",
     )
 
     # Ignored characters
@@ -284,6 +287,17 @@ class Lex(object):
         self.delete = False
         self.is_extra = False
         # self.is_dead = False
+        self.chmod_mode = None
+        self.chmod_owner = None
+        self.chmod_group = None
+        self.chmod_perms = None
+        self.write_mode = None
+        
+    def t_TILDE(self, t):
+        r"\~"
+        self.is_user_home = True
+        # self.depth += 1
+        # self.is_root = False
 
     def t_PLUS(self, t):
         r"\+"
@@ -427,6 +441,11 @@ class Lex(object):
             )
             return
 
+        if self.is_user_home:
+            # self.is_user_home = False
+            self.cwd = os.path.expanduser("~")
+            self.is_user_home = False
+
         if self.is_dir:
             folder_name = Lex._clean_name(t.value)
 
@@ -485,7 +504,10 @@ class Lex(object):
                     # os.rmdir(os.path.join(self.cwd, folder_name))
                     # self.depth -= 1
                     # self.cwd = os.getcwd()
-        else:
+        
+        
+        else: # incase you forgot. It's not a folder its a file
+            
             # print(t.value)
             file_name = Lex._clean_name(t.value)
 

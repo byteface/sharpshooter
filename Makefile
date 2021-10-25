@@ -6,6 +6,9 @@ test:
 test_minus:
 	python3 -m unittest tests.test_sharpshooter.TestCase.test_minus
 
+test_tilde:
+	python3 -m unittest tests.test_sharpshooter.TestCase.test_tilde
+
 clean:
 	rm -r dir/
 
