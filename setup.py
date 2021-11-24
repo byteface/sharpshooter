@@ -41,4 +41,10 @@ setup(
   ],
   packages=find_packages(),
   include_package_data=True,
+  entry_points={
+      'console_scripts': [
+          'sharpshooter = sharpshooter.__main__:run',
+      ],
+  },
+  
 )

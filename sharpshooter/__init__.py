@@ -24,7 +24,7 @@
 
 """
 
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 __license__ = "MIT"
 __author__ = "@byteface"
 
@@ -51,7 +51,7 @@ import ply.lex as lex
 #         self.output = output
 #         self.read()
 #         self.write()
-    
+
 #     def read(self):
 #         """
 #         reads data from the file
@@ -63,7 +63,7 @@ import ply.lex as lex
 #             with open(self.input, 'r') as f:
 #                 self.data = f.read()
 #         return self.data
-    
+
 #     def write(self, path=None):
 #         """[write the data to the path]
 
@@ -80,7 +80,7 @@ import ply.lex as lex
 
 
 def sslog(msg: str, *args, **kwargs):
-    ''' logging for sharpshooter '''
+    """logging for sharpshooter"""
 
     if tree.QUIET_MODE:
         return
@@ -96,7 +96,7 @@ def sslog(msg: str, *args, **kwargs):
     print(msg, args, kwargs)
 
 
-def octal_to_text(octal):
+def octal_to_text(octal) -> str:
     """
     convers an octal string to a text string
     i.e.
@@ -123,7 +123,7 @@ def octal_to_text(octal):
     return text
 
 
-def get_file_info(path, filename):
+def get_file_info(path: str, filename: str) -> dict:
     """
     # get the same data as if doing ls -al
     # -rw-r--r--@ 1 byteface  staff  2100 21 Sep 07:58 README.md
@@ -236,7 +236,7 @@ class Lex(object):
         self.is_test = False
         self.tab_count = 0
         self.last_tab_count = 0
-        self.is_user_home = False # tilde handler
+        self.is_user_home = False  # tilde handler
 
         self.start_tabs = 0  # if a whole block is indented, this is the number of tabs where to start from
         self.first = True  # set to false after the first file or folder is created
@@ -250,7 +250,6 @@ class Lex(object):
         self.dead_depth = 0  # the depth of the dead dir
 
         self.lexer = lex.lex(module=self)
-
 
     tokens = (
         "FILE",
@@ -292,7 +291,7 @@ class Lex(object):
         self.chmod_group = None
         self.chmod_perms = None
         self.write_mode = None
-        
+
     def t_TILDE(self, t):
         r"\~"
         self.is_user_home = True
@@ -387,7 +386,7 @@ class Lex(object):
             return
 
         while self.tab_count > 0:
-            
+
             if tree.TEST_MODE:
                 # note - in test mode we can't change dirs so have to build cwd manually
                 path_parent = os.path.dirname(self.cwd)
@@ -406,9 +405,9 @@ class Lex(object):
     t_RPAREN = r"\)"
 
     def t_FILE(self, t):
-        # r"[a-zA-Z_][a-zA-Z_0-9.\-]*" # v1- doesn't allows spaces in filenames 
+        # r"[a-zA-Z_][a-zA-Z_0-9.\-]*" # v1- doesn't allows spaces in filenames
         r"[a-zA-Z_][a-zA-Z_0-9.\-]*([\w. ]*)"
-        
+
         if self.cwd is None:
             self.cwd = os.getcwd()
 
@@ -459,24 +458,28 @@ class Lex(object):
                 try:
                     # if not the last line still need to navigate into it if it exists.
                     # also if not then stop nest ones being created also
-                    os.chdir(os.path.join(self.cwd, folder_name))  # this should now error if it doesn't exist
+                    os.chdir(
+                        os.path.join(self.cwd, folder_name)
+                    )  # this should now error if it doesn't exist
                     self.depth += 1
                     self.cwd = os.getcwd()
                 except FileNotFoundError as e:
-                    sslog(f"""Folder '{folder_name}' not created. read_only. 
+                    sslog(
+                        f"""Folder '{folder_name}' not created. read_only. 
 
                     remove the colon from the line if you want to create the folder
                     
-                    """)
+                    """
+                    )
                     # raise e
                     self.is_dead = True
                     self.dead_depth = self.depth
                     # if self.depth == 0:
-                        # self.is_dead = False
-                        # self.dead_depth = 0 # hacky
+                    # self.is_dead = False
+                    # self.dead_depth = 0 # hacky
                     self.depth += 1
                     # self.cwd = os.getcwd()
-                    
+
                     return
 
             else:
@@ -485,7 +488,9 @@ class Lex(object):
 
                         if tree.TEST_MODE:
                             # TODO - doesn't windows have backslash?
-                            sslog(f"TEST_MODE: create folder: {self.cwd}{os.sep}{folder_name}")
+                            sslog(
+                                f"TEST_MODE: create folder: {self.cwd}{os.sep}{folder_name}"
+                            )
                             self.depth += 1
                             self.cwd += f"{os.sep}{folder_name}"
                             return
@@ -504,10 +509,9 @@ class Lex(object):
                     # os.rmdir(os.path.join(self.cwd, folder_name))
                     # self.depth -= 1
                     # self.cwd = os.getcwd()
-        
-        
-        else: # incase you forgot. It's not a folder its a file
-            
+
+        else:  # incase you forgot. It's not a folder its a file
+
             # print(t.value)
             file_name = Lex._clean_name(t.value)
 
@@ -585,14 +589,14 @@ class Lex(object):
 
 class tree(object):
 
-    TEST_MODE = False  # wont actually create files
-    QUIET_MODE = False  # TODO suppress all logs
-    VERBOSE_MODE = False  # outputut logs to file
+    TEST_MODE: bool = False  # wont actually create files
+    QUIET_MODE: bool = False  # TODO suppress all logs
+    VERBOSE_MODE: bool = False  # outputut logs to file
 
     # stores read info
     FILE_INFO = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         return tree.FILE_INFO
 
     # def __repr__(self):
@@ -623,7 +627,7 @@ class tree(object):
             output += "\n"
         return output
 
-    def __init__(self, tree_string: str, test: bool = False):
+    def __init__(self, tree_string: str, test: bool = False) -> None:
         """
 
         Args:
@@ -631,6 +635,7 @@ class tree(object):
                 - a string following the format carefully layed out in the sharpshooter specifcation (the notes in the readme)
 
         """
+        print("tree was instantiated")
         tree.TEST_MODE = test
         tree_string = tree_string.replace("\t", "    ")  # force tabs to 4 spaces
 

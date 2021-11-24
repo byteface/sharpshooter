@@ -43,7 +43,7 @@ putting it all together…
     +mail
         +vendor
         index.html
-            +something
+            +something # this one will fail
         file.py
         file.py
 ```
@@ -60,7 +60,6 @@ tree('''
         +mail
             +vendor
             index.html
-                +something
             file.py
         file2.py
 ''')
@@ -159,7 +158,6 @@ tree('''
 
 up to you.
 
-
 ## test mode
 
 If you are feeling unsure. Try tree in test mode.
@@ -206,10 +204,22 @@ To see planned features/goals see TODO.md
 
 ## CLI
 
-You can use the CLI to read the version i.e.
+There's several commands you can pass to sharpshooter on the command line.
 
 ```
-$ python3 -m sharpshooter --version
+$ python3 -m sharpshooter --version  # shows the current version. also uses -v
+```
+
+```
+$ sharpshooter --file myconfig.tree  # parses a .tree file and executes it. also uses -f
+```
+
+```
+$ sharpshooter --test anotherconfig.tree  # parses a .tree file in test mode. also uses -t
+```
+
+```
+$ sharpshooter --create someconfigname  # creates a helloworld.tree file. also uses -c
 ```
 
 ## NOTES
@@ -227,6 +237,21 @@ If you're unsure set it first. i.e.
 import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 ```
+
+## Contributing
+
+If you think you can write a sharpshooter parser in another language then please do and i'll link to your repo.
+
+To dev on this one locally just pull the repo and do...
+
+```
+python3 -m venv venv
+. venv/bin/activate
+pip install -r requirements.txt 
+python3 setup.py install  # To install your version.
+```
+
+Or run and write some tests, there's a few to get started in the Makefile.
 
 ## DISCLAIMER / known bugs
 
