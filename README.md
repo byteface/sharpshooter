@@ -9,8 +9,8 @@ Shorthand templates for creating (or destroying) file-systems.
 
 tree could be written for any language.
 
-```
-pip install sharpshooter
+```bash
+python3 -m pip install sharpshooter
 ```
 
 ## intro
@@ -50,7 +50,7 @@ putting it all together…
 
 ### Creating a tree
 
-```
+```python
 from sharpshooter import tree
 
 tree('''
@@ -71,7 +71,7 @@ tree doesn't wait to be told. Your files are now there.
 
 tree can also remove dirs and files. You guessed it. With the the - minus symbol
 
-```
+```python
 tree = '''
 +dir
     +plugins
@@ -85,7 +85,7 @@ But be mindful this example would also 'create' the dir and plugins folders if t
 
 To read info about a file or folder without creation use colon ':' to indicate read-only.
 
-```
+```python
 tree = '''
 +:dir
     +:plugins
@@ -95,12 +95,13 @@ tree = '''
 
 More on colons : later.
 
+**WARNING - be careful using minus. tree could destroy your entire filesytem if used incorrectly.**
+
 ## comments
 
-use # to comment out a line or instruction.
-(warning. bug. DON'T leave a space before the comment. Lexer may interpret it as directory change. THIS should be fixed. add more tests before removing this warning.)
+Use # to comment out a line or instruction.
 
-```
+```python
 s = '''
 +:dir
     file# some ignored text here
@@ -109,13 +110,15 @@ s = '''
 '''
 ```
 
+**WARNING - the # symbol is ignored if it comes after the <, $ or > symbols. (see why further down)**
+
 ## read only
 
 To read info about a file or folder, without creating any, use a colon ':'
 
 You can then format the tree with an f-string to get the result which produces similir output as 'ls -al' on nix systems i.e.
 
-```
+```python
 test = tree('''
 :README.md
 ''')
@@ -125,7 +128,7 @@ print(f"{test}")
 
 or for a directory...
 
-```
+```python
 test = tree('''
 :venv
 ''')
@@ -135,10 +138,9 @@ print(f"{test}")
 
 Notice the little 'd' at the front lets you know it's a directory. Just like in a terminal.
 
-
 you can safely change change order of colon and plus i.e. will still work.
 
-```
+```python
 tree('''
 :+dont
     :+make
@@ -148,7 +150,7 @@ tree('''
 
 but i prefer to use the colon right before the file or folder name .i.e.
 
-```
+```python
 tree('''
 +:dont
     +:make
@@ -166,7 +168,7 @@ It will log what it would do to the console but won't actually create any files 
 
 You just have to past test=True to the tree function. i.e
 
-```
+```python
 mytree = '''
 +somedir
     +anotherdir
@@ -185,7 +187,7 @@ Now you can check the console and if you feel confident set test=False and run t
 
 users home path is supported. (* TODO - not yet tested on pc)
 
-```
+```python
     s1 = """
     :+~
         test.png
@@ -196,9 +198,68 @@ users home path is supported. (* TODO - not yet tested on pc)
     tree(s1, test=False)
 ```
 
+## less than symbol <
+
+< This symbol can be used to write a string to a file.
+
+```python
+    mystring = """
+    +somedir
+        somescript.py < print('hello world!')
+        some.txt < hello world!
+        script.sh < echo 'hello world'
+    """
+    tree(mystring)
+```
+
+you can use \n to add more than one line to a file.
+
+```python
+    mystring = """
+    +somedir
+        somepage.md < # heading \n## another heading \n### and another heading
+    """
+    tree(mystring)
+```
+
+**WARNING - the comment # symbols are ignored after the < so they can be succesfully written to files. (i.e. .md files)**
+
+## dollar symbol $
+
+Anything after the $ symbol is passed to the shell and the result is written to the file.
+
+```python
+    mystring = """
+    +somedir
+        test.txt $ cowsay moo
+    """
+    tree(mystring)
+```
+
+**WARNING - comments # symbol is ignored after the $ so don't use comments on these lines or they could be sent to the terminal**
+
+## greater than symbol > (TODO - NOT TESTED YET)
+
+bash commands won't work on windows. Instead use the > symbol for windows commands
+
+Anything after the > symbol is passed to cmd with the result written to the file.
+
+```python
+    mystring = """
+    +somedir
+        test.txt $ ls -al
+        test.txt > dir
+    """
+    tree(mystring)
+```
+
+**WARNING - comments # symbol is ignored after the > so don't use comments on these lines or they could be sent to cmd**
+
 ## Anything else?
 
 - you can now have spaces in filenames.
+
+- tips: use with a proxy server and range requests to write partials to files.
 
 To see planned features/goals see TODO.md
 
@@ -206,25 +267,25 @@ To see planned features/goals see TODO.md
 
 There's several commands you can pass to sharpshooter on the command line.
 
-```
-$ python3 -m sharpshooter --version  # shows the current version. also uses -v
-```
-
-```
-$ sharpshooter --file myconfig.tree  # parses a .tree file and executes it. also uses -f
+```bash
+python3 -m sharpshooter --version  # shows the current version. also uses -v
 ```
 
-```
-$ sharpshooter --test anotherconfig.tree  # parses a .tree file in test mode. also uses -t
+```bash
+sharpshooter --file myconfig.tree  # parses a .tree file and executes it. also uses -f
 ```
 
+```bash
+sharpshooter --test anotherconfig.tree  # parses a .tree file in test mode. also uses -t
 ```
-$ sharpshooter --create someconfigname  # creates a helloworld.tree file. also uses -c
+
+```bash
+sharpshooter --create someconfigname  # creates a helloworld.tree file. also uses -c
 ```
 
 ## NOTES
 
-I came up with the idea while mucking around with a lexer. 
+I came up with the idea while mucking around with a lexer.
 
 https://www.dabeaz.com/ply/
 
@@ -233,7 +294,7 @@ https://github.com/dabeaz/ply
 remember it executes from where your python thinks is the current dir.
 If you're unsure set it first. i.e.
 
-```
+```bash
 import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 ```
@@ -244,21 +305,49 @@ If you think you can write a sharpshooter parser in another language then please
 
 To dev on this one locally just pull the repo and do...
 
-```
+```bash
 python3 -m venv venv
 . venv/bin/activate
 pip install -r requirements.txt 
-python3 setup.py install  # To install your version.
+python3 -m sharpshooter -f test.tree
+# to use venv version without installing
 ```
 
 Or run and write some tests, there's a few to get started in the Makefile.
 
+You can install your own version globally using a normal shell with no venv activated
+
+```bash
+python3 setup.py install
+```
+
+There's also a test.tree file in the root you can just tweak and run through the CLI.
+
+It creates a tmp folder you can delete and rerun to experiment. i.e.
+
+```
++tmp
+    +hello
+        world.txt < y tho!
+        page.html < <html>y tho!</html>
+    +this # some comment
+        +is
+            cool.txt $ cowsay cool
+            cool.txt > dir
+            test.md < # heading \n## another heading \n### and another heading
+    page.html $ curl -s https://www.google.com
+    page2.htm $ curl -s https://www.fileformat.info/info/charset/UTF-32/list.htm
+    +partial
+        star.html $ curl -s -r 32-35 https://raw.githubusercontent.com/byteface/domonic/master/docs/_templates/sidebarintro.html
+    files.txt $ find .
+```
+
 ## DISCLAIMER / known bugs
+
+Use 4 spaces not tabs.
 
 This is a work in progress. It creates and destroys files on your hard drive. So be careful.
 
 DON'T leave trailing negative space on lines. I use space to change dirs.
 
-Use 4 spaces not tabs. (I've not tested with tabs as my editor converts them to 4 spaces). will sort later.
-
-When using a comment. Don't leave space before the # < note this one should be fixed.
+comments won't work on lines with bash/windows commands or when writing to file. this is so you can write # symbols to the file

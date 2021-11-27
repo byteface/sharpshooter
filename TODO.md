@@ -1,8 +1,9 @@
-NOTE - non of this works. its all 'TODO'. 
+# NOTE - non of this works. its all TODO/ideas
+
 Anything working will go over to readme.md once added as a feature. consider all of these tickets.
 
-# - TODO - testmode . should also report if it would have failed/succeeded.
-# - TODO - testmode . should also report on colons.
+### - TODO - testmode . should also report if it would have failed/succeeded.
+### - TODO - testmode . should also report on colons.
 
 ## quiet mode
 
@@ -36,35 +37,21 @@ tree = ''' \
 '''
 ```
 
-##careful
 
-sharpshooter can destroy your file system.
-
-```
-s = '''
--:~
-'''
-```
-
-So don't use a minus to 'see what will happen'. Make sure you know what is being removed.
+TODO - colons for opening muli-line strings?
++hello
+    cow.md:
+        here you could write blocks of text
+        over multiple lines.
+        Form this tab point
 
 
-TODO - To write a string to a file use <, >, <<, >>
+TODO - substitute words on command line?
++hello
+    cow.txt $ cowsay {{substitute}}
 
-```
-+dir
-    file < some text
-    other text > file
-```
+TODO - << 2 chevrons to append to a file.
 
-
-##CLI
-#TODO
-
-
-
-
-## TIPS
 
 Use f strings to Mixin your own functions… ( needs python so won't work from CLI )
 
@@ -84,15 +71,21 @@ tree = f''' \
 '''
 ```
 
+TODO - print the tree in a tree format (use anytree lib?)
+```
+Udo
+├── Marc
+│   └── Lian
+└── Dan
+    ├── Jet
+    ├── Jan
+    └── Joe
+        └── dan.txt
+```
 
-## CLI
+
+notes...
 
 - various additions added as comments in the __main__.py file.
-- ¥ needs to be pasted in terimnal . find an other shortcut symbol
-
-
-
-
-## grep (much later)
-
-- maybe do some shorthand searching?
+- ¥ needs to be pasted in terimnal . find an other shortcut symbol 🌳
+- grep (much later) - maybe do some shorthand searching?

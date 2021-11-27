@@ -17,14 +17,14 @@
 
     # another optional way is it use f_ and d_ builder functions
     # TODO - this aint dont yet
-    d_('somedir', 
+    d_('somedir',
         f_('file1', chmod=755),
         d_('things', 'file2.txt', 'file3.txt')
     )
 
 """
 
-__version__ = "0.0.6"
+__version__ = "0.0.7"
 __license__ = "MIT"
 __author__ = "@byteface"
 
@@ -34,6 +34,30 @@ import os
 import shutil
 import ply.lex as lex
 
+
+@staticmethod
+def term(cmd: str):
+    """run
+
+    runs any command on the terminal
+
+    Args:
+        cmd (str): The command you want to run on the terminal
+
+    Returns:
+        str: the response as a string
+    """
+    sslog("command: " + cmd)
+    if tree.TEST_MODE:
+        sslog('TEST_MODE. command not run: ', cmd)
+        return  # cmd
+    import subprocess
+    returned_output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
+    try:
+        returned_output = returned_output.decode('utf-8')
+    except:
+        returned_output = returned_output.decode('cp1252')
+    return returned_output
 
 # class FileStream():
 
@@ -79,7 +103,7 @@ import ply.lex as lex
 #         return self.data
 
 
-def sslog(msg: str, *args, **kwargs):
+def sslog(msg: str, lvl: str = None, *args, **kwargs):
     """logging for sharpshooter"""
 
     if tree.QUIET_MODE:
@@ -93,6 +117,13 @@ def sslog(msg: str, *args, **kwargs):
     #     print(msg)
     #     sys.stdout = old_log
 
+    # TODO - color the logs?
+    # if lvl is None:
+    #     print(msg)
+    # elif lvl == "error":
+    #     print(f"\033[1;41m{msg}\033[1;0m", args, kwargs)
+    # elif lvl == "warning":
+    #     print(f"\033[1;31m{msg}\033[1;0m", args, kwargs)
     print(msg, args, kwargs)
 
 
@@ -223,31 +254,38 @@ class Lex(object):
     def __init__(self):
 
         # flags
+        # as we parse lines we set flags to instruct the parser what to do.
+        # most are reset on each line. (see t_newline)
         self.root = os.getcwd()  # may not need
-        self.is_root = True
-        self.depth = 0
-        self.cwd = None
-        self.is_dir = True
-        self.was_dir = True  # hacky to always start true?
-        self.skip = False
-        self.is_read_only = False
-        self.is_comment = False
-        self.is_recursive = False
-        self.is_test = False
-        self.tab_count = 0
-        self.last_tab_count = 0
-        self.is_user_home = False  # tilde handler
+        self.is_root: bool = True
+        self.depth: int = 0
+        self.cwd: str = None
+        self.is_dir: bool = True
+        self.was_dir: bool = True  # hacky to always start true?
+        self.skip: bool = False
+        self.is_read_only: bool = False
+        self.is_comment: bool = False
+        self.is_recursive: bool = False
+        self.is_test: bool = False
+        self.tab_count: int = 0
+        self.last_tab_count: int = 0
+        self.is_user_home: bool = False  # tilde handler
 
-        self.start_tabs = 0  # if a whole block is indented, this is the number of tabs where to start from
-        self.first = True  # set to false after the first file or folder is created
+        self.start_tabs: int = 0  # if a whole block is indented, this is the number of tabs where to start from
+        self.first: bool = True  # set to false after the first file or folder is created
 
-        self.delete = False
+        self.delete: bool = False
 
-        self.is_extra = False  # need maybe a better variable name.
+        self.is_extra: bool = False  # need maybe a better variable name.
         # basically, if we are past the filename or dirname, we are in the extra stuff
 
-        self.is_dead = False  # if a dir fails to create, we can mark it as dead
-        self.dead_depth = 0  # the depth of the dead dir
+        # self.last_thing_created
+        # self.last_folder_created = None
+        self.last_file_created: str = None   # the last file created. see notes below
+        # after is_extra this would be the one on the current line. however before that it would be from a previous line.
+
+        self.is_dead: bool = False  # if a dir fails to create, we can mark it as dead
+        self.dead_depth: int = 0  # the depth of the dead dir
 
         self.lexer = lex.lex(module=self)
 
@@ -310,7 +348,108 @@ class Lex(object):
 
     def t_WRITE(self, t):
         r"\<"
-        sslog("writing:::")
+        content = t.lexer.lexdata[t.lexer.lexpos:]
+        if content.find("\n") != -1:
+            content = content[:content.find("\n")]
+
+        original_length = len(content)
+
+        content = '\n'.join(content.split('\\n'))
+        # content = data  # t.lexer.lexdata[t.lexer.lexpos:]
+        # if first char is space remove it
+        if content[0] == " ":
+            content = content[1:]
+
+        # TODO - use the filestream class to do various things
+
+        # print the path to the file just created
+        # sslog('Write content into this file:', self.last_file_created)
+        if tree.TEST_MODE:
+            sslog('TEST_MODE1: skip writing content into this file:', self.last_file_created)
+        else:
+            self.last_file_created = self.last_file_created.strip()  # ensure remove trailing spaces
+            with open(self.last_file_created, "w+", encoding="utf-8") as f:
+                f.write(content)
+                sslog('Writing into ', self.last_file_created)
+                f.close()
+            # sslog("wrote content into this file:", self.last_file_created)
+
+        # skip the rest of the line
+        t.lexer.skip(original_length)  # why plus 1?
+
+    def t_sh(self, t):
+        r"\$"
+        data = t.lexer.lexdata[t.lexer.lexpos:]
+        if data.find("\n") != -1:
+            data = data[:data.find("\n")]
+        cmd = data
+
+        original_cmd_len = len(cmd)  # so we can skip the rest of the line
+        # if first char is space remove it
+        if cmd[0] == " ":
+            cmd = cmd[1:]
+
+        # if windows skip the line
+        if os.name == 'nt':
+            t.lexer.skip(original_cmd_len)
+            sslog("skipping bash line on windows")
+            return
+
+        # run a shell command with subprocess and return the result
+        content = term(cmd)
+
+        # sslog('write content into this file:', self.last_file_created)
+        if tree.TEST_MODE:
+            sslog('TEST_MODE2: skip writing content into this file:', self.last_file_created)
+        else:
+            self.last_file_created = self.last_file_created.strip()  # ensure remove trailing spaces
+            with open(self.last_file_created, "w") as f:
+                sslog('Writing to ', self.last_file_created)
+                f.write(content)
+                f.close()
+            # sslog("wrote content into this file:", self.last_file_created)
+
+        # skip the rest of the line
+        # t.lexer.skip(len(t.lexer.lexdata) - t.lexer.lexpos)
+        t.lexer.skip(original_cmd_len)
+
+    def t_cmd(self, t):
+        r"\>"
+        data = t.lexer.lexdata[t.lexer.lexpos:]
+        if data.find("\n") != -1:
+            data = data[:data.find("\n")]
+        # print('data:::::', data)
+        cmd = data
+        original_cmd_len = len(cmd)  # so we can skip the rest of the line later
+        # if first char is space remove it
+        if cmd[0] == " ":
+            cmd = cmd[1:]
+
+        # if not windows skip the rest of the line
+        if os.name != 'nt':
+            t.lexer.skip(original_cmd_len)
+            sslog("not windows::: skipping rest of line")
+            return
+
+        # run a shell command with subprocess and return the result
+        content = term(cmd)
+        # print('RESULT:', content)
+
+        # print the path to the file just created
+        # sslog('write content into this file:', self.last_file_created)
+        if tree.TEST_MODE:
+            sslog('TEST_MODE2: skip writing content into this file:', self.last_file_created)
+        else:
+            self.last_file_created = self.last_file_created.strip()  # ensure remove trailing spaces
+            with open(self.last_file_created, "w") as f:
+                sslog('Writing to', self.last_file_created)
+                f.write(content)
+                f.close()
+            # sslog("wrote content into this file:", self.last_file_created)
+
+        # skip the rest of the line
+        # t.lexer.skip(len(t.lexer.lexdata) - t.lexer.lexpos)
+        t.lexer.skip(original_cmd_len)
 
     # t_DIVIDE  = r'/'
     # t_COLON  = r':'
@@ -322,8 +461,8 @@ class Lex(object):
 
     def t_TAB(self, t):
         r"[\t]+"
-        sslog("Tab(s)")
-        sslog("t_TAB", t)
+        # sslog("Tab(s)")
+        # sslog("t_TAB", t)
         self.move_back(len(t.value))
 
     def t_SPACE(self, t):
@@ -423,7 +562,7 @@ class Lex(object):
         if self.is_dead:
             # print( self.cwd )
             if self.depth <= self.dead_depth:
-                sslog(self.depth, self.dead_depth)
+                # sslog(self.depth, self.dead_depth)
                 sslog("Same depth as previous dead dir. no longer dead:", t.value)
                 self.is_dead = False
                 # self.depth = self.dead_depth
@@ -465,10 +604,9 @@ class Lex(object):
                     self.cwd = os.getcwd()
                 except FileNotFoundError as e:
                     sslog(
-                        f"""Folder '{folder_name}' not created. read_only. 
+                        f"""Folder '{folder_name}' not created. read_only.
 
                     remove the colon from the line if you want to create the folder
-                    
                     """
                     )
                     # raise e
@@ -499,7 +637,7 @@ class Lex(object):
                             sslog("created folder", folder_name)
                         # os.mkdir(os.path.join(self.cwd, folder_name))
                     else:
-                        sslog("folder already exists")
+                        sslog(f"{folder_name} already exists")
 
                     os.chdir(os.path.join(self.cwd, folder_name))
                     self.depth += 1
@@ -532,9 +670,14 @@ class Lex(object):
                     else:
                         if not os.path.exists(os.path.join(self.cwd, file_name)):
                             with open(os.path.join(self.cwd, file_name), "w") as f:
-                                f.write(t.value)
+                                f.write("")  # t.value
+                                f.close()
+                            sslog("created file:", file_name)
                         else:
                             sslog("file already exists")
+
+                    self.last_file_created = os.path.join(self.cwd, file_name)
+                    self.last_file_created = self.last_file_created.strip()
 
                 else:
                     try:
@@ -558,7 +701,8 @@ class Lex(object):
         Returns:
             [str]: [the name cleaned if necessary]
         """
-        return name.replace("\n", "").replace("\t", "")
+        name = name.replace("\n", "").replace("\t", "")
+        return name.strip()
 
     @staticmethod
     def _remove_file_or_folder(path: str):
@@ -633,14 +777,20 @@ class tree(object):
         Args:
             tree_string
                 - a string following the format carefully layed out in the sharpshooter specifcation (the notes in the readme)
+            test (bool, optional): [if true, will not actually create files or folders]. Defaults to False.
 
         """
-        print("tree was instantiated")
+        sslog("🌳 tree")
+
+        # with open('test3.html', "w") as f:
+        #     f.write_file('<html>test</html>')
+        #     f.close()
+
         tree.TEST_MODE = test
         tree_string = tree_string.replace("\t", "    ")  # force tabs to 4 spaces
 
         if tree.TEST_MODE:
-            sslog(f"TEST_MODE is active. Changes will not be applied.")
+            sslog("TEST_MODE is active. Changes will not be applied.")
 
         self.lexer = Lex()
         self.lexer.lexer.input(tree_string)
