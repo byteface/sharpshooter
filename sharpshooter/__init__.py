@@ -780,7 +780,7 @@ class tree(object):
             test (bool, optional): [if true, will not actually create files or folders]. Defaults to False.
 
         """
-        sslog("🌳 tree")
+        sslog("tree")
 
         # with open('test3.html', "w") as f:
         #     f.write_file('<html>test</html>')
