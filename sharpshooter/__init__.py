@@ -24,7 +24,7 @@
 
 """
 
-__version__ = "0.0.7"
+__version__ = "0.0.8"
 __license__ = "MIT"
 __author__ = "@byteface"
 
@@ -35,7 +35,6 @@ import shutil
 import ply.lex as lex
 
 
-@staticmethod
 def term(cmd: str):
     """run
 
