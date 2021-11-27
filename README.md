@@ -10,7 +10,7 @@ Shorthand templates for creating (or destroying) file-systems.
 tree could be written for any language.
 
 ```bash
-python3 -m pip install sharpshooter
+python3 -m pip install sharpshooter --upgrade
 ```
 
 ## intro
