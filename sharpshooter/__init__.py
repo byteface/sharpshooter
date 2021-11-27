@@ -2,29 +2,14 @@
     tree (sharpshooter)
     ====================================
 
-    # instructional language for creating files and folders i.e
-    +:dir
-        +plugins
-            +mail
-                file3
-                +things
-                    +again
-                        file8
-                        file9.txt
-                    file7
-        file6.txt
-    file5.txt
+    A shorthand syntax for creating files and folders.
 
-    # another optional way is it use f_ and d_ builder functions
-    # TODO - this aint dont yet
-    d_('somedir',
-        f_('file1', chmod=755),
-        d_('things', 'file2.txt', 'file3.txt')
-    )
+    +dir
+        file.txt < hello world
 
 """
 
-__version__ = "0.0.8"
+__version__ = "0.0.9"
 __license__ = "MIT"
 __author__ = "@byteface"
 
@@ -187,7 +172,6 @@ def get_file_info(path: str, filename: str) -> dict:
 
     try:
         import pwd
-
         # get the name of the owner
         owner = pwd.getpwuid(owner)
         owner = owner.pw_name
@@ -286,6 +270,12 @@ class Lex(object):
         self.is_dead: bool = False  # if a dir fails to create, we can mark it as dead
         self.dead_depth: int = 0  # the depth of the dead dir
 
+        # self.chmod_mode = None
+        # self.chmod_owner = None
+        # self.chmod_group = None
+        # self.chmod_perms = None
+        # self.write_mode = None
+
         self.lexer = lex.lex(module=self)
 
     tokens = (
@@ -322,12 +312,19 @@ class Lex(object):
         self.is_root = True
         self.delete = False
         self.is_extra = False
-        # self.is_dead = False
-        self.chmod_mode = None
-        self.chmod_owner = None
-        self.chmod_group = None
-        self.chmod_perms = None
-        self.write_mode = None
+
+        # This allows us to have multiple root dirs/files
+        # NOTE - not sure if this is best way. But it took a while to get to this point. (or to understand why it has to be this way)
+        # basically. lines with spaces cause flags to be set, however if there's no space, no flags get checked
+        # so for tree to have multiple root paths. we need to know if the oncoming line is a dir or file.
+        # so if next char is not a space reset the tab count and depth
+        if t.lexer.lexdata[t.lexer.lexpos] != " ":
+            self.tab_count = 0
+            self.depth = 0
+            # note - we may have to reset more than just that. (keep an eye on this)
+
+        # TODO - root safety check
+        # really should never allow cwd to be lower than root
 
     def t_TILDE(self, t):
         r"\~"
@@ -451,32 +448,16 @@ class Lex(object):
         t.lexer.skip(original_cmd_len)
 
     # t_DIVIDE  = r'/'
-    # t_COLON  = r':'
     def t_COLON(self, t):
         r"\:"
-        # print('t_COLON', t)
-        # global is_read_only
         self.is_read_only = True
 
     def t_TAB(self, t):
         r"[\t]+"
-        # sslog("Tab(s)")
-        # sslog("t_TAB", t)
         self.move_back(len(t.value))
 
     def t_SPACE(self, t):
         r"[ ]+"
-        # print('Space(s)')
-        # TODO - error if not divisible by 4
-        # length = len(t.value)
-        # if length % 4 != 0:
-        #     print(f"Illegal spacing>>>>>>>>>>>>>>>>>>>>>>>>>>>: {t.value[0]!r}")
-        #     print(length)
-        # t.lexer.skip(length-1)
-        # return
-
-        # print('t_SPACE', t)
-        # print(len(t.value))
         if self.is_extra:
             return  # TODO - for now ignoring anything after the filename
 
@@ -487,8 +468,6 @@ class Lex(object):
             return
 
         spaces -= self.start_tabs
-        # if spaces < self.start_tabs:
-        # return
 
         self.move_back(spaces)
 
@@ -498,18 +477,6 @@ class Lex(object):
         Args:
             spaces ([int]): [how many steps to move back up the directory tree]
         """
-
-        # if spaces == 0:
-        #     return
-
-        # if spaces < 0:
-        #     print("ERROR: move back negative")
-        #     return
-
-        # if self.is_root:
-        #     print("ERROR: move back from root")
-        #     return
-
         self.is_root = False  # hacky. it wont get called if no space
         self.last_tab_count = self.tab_count
         self.tab_count = self.depth - spaces
@@ -536,6 +503,8 @@ class Lex(object):
 
             self.depth -= 1
             self.tab_count -= 1
+            # print(self.depth, self.tab_count, self.cwd)
+
 
     # t_NEWLINE  = r'\n'
     t_EQUALS = r"="
@@ -559,15 +528,10 @@ class Lex(object):
         self.is_extra = True  # lets the spacer know we are past the filename or dirname
 
         if self.is_dead:
-            # print( self.cwd )
             if self.depth <= self.dead_depth:
-                # sslog(self.depth, self.dead_depth)
                 sslog("Same depth as previous dead dir. no longer dead:", t.value)
                 self.is_dead = False
-                # self.depth = self.dead_depth
                 self.dead_depth = 0
-
-                # print( self.cwd )
             else:
                 sslog("Skipping dead dir", t.value)
                 return
@@ -579,7 +543,6 @@ class Lex(object):
             return
 
         if self.is_user_home:
-            # self.is_user_home = False
             self.cwd = os.path.expanduser("~")
             self.is_user_home = False
 
@@ -590,12 +553,10 @@ class Lex(object):
                 # print('nothing can be created in this block')
                 # TODO - only if its the last item in the tree
                 get_file_info(self.cwd, folder_name)
-                # with open(fileinfo['path'], 'r') as f:
-                # fileinfo['data'] = f.read()
 
                 try:
                     # if not the last line still need to navigate into it if it exists.
-                    # also if not then stop nest ones being created also
+                    # also if not then stop nested ones being created also
                     os.chdir(
                         os.path.join(self.cwd, folder_name)
                     )  # this should now error if it doesn't exist
@@ -608,23 +569,16 @@ class Lex(object):
                     remove the colon from the line if you want to create the folder
                     """
                     )
-                    # raise e
                     self.is_dead = True
                     self.dead_depth = self.depth
-                    # if self.depth == 0:
-                    # self.is_dead = False
-                    # self.dead_depth = 0 # hacky
                     self.depth += 1
-                    # self.cwd = os.getcwd()
-
                     return
 
             else:
+
                 if not self.delete:
                     if not os.path.exists(os.path.join(self.cwd, folder_name)):
-
                         if tree.TEST_MODE:
-                            # TODO - doesn't windows have backslash?
                             sslog(
                                 f"TEST_MODE: create folder: {self.cwd}{os.sep}{folder_name}"
                             )
@@ -634,7 +588,6 @@ class Lex(object):
                         else:
                             os.mkdir(os.path.join(self.cwd, folder_name))
                             sslog("created folder", folder_name)
-                        # os.mkdir(os.path.join(self.cwd, folder_name))
                     else:
                         sslog(f"{folder_name} already exists")
 
@@ -643,22 +596,14 @@ class Lex(object):
                     self.cwd = os.getcwd()
                 else:
                     Lex._remove_file_or_folder(os.path.join(self.cwd, folder_name))
-                    # os.rmdir(os.path.join(self.cwd, folder_name))
-                    # self.depth -= 1
-                    # self.cwd = os.getcwd()
 
         else:  # incase you forgot. It's not a folder its a file
 
-            # print(t.value)
             file_name = Lex._clean_name(t.value)
-
             if self.is_read_only:
                 # print('in the file block')
                 # TODO - only if its the last item in the tree
                 get_file_info(self.cwd, file_name)
-
-                # with open(fileinfo['path'], 'r') as f:
-                # fileinfo['data'] = f.read()
 
             else:
                 if not self.delete:
@@ -774,20 +719,13 @@ class tree(object):
         """
 
         Args:
-            tree_string
-                - a string following the format carefully layed out in the sharpshooter specifcation (the notes in the readme)
+            tree_string (string): [A string in the format expected by the sharpshooter lexer]
             test (bool, optional): [if true, will not actually create files or folders]. Defaults to False.
 
         """
         sslog("tree")
-
-        # with open('test3.html', "w") as f:
-        #     f.write_file('<html>test</html>')
-        #     f.close()
-
         tree.TEST_MODE = test
         tree_string = tree_string.replace("\t", "    ")  # force tabs to 4 spaces
-
         if tree.TEST_MODE:
             sslog("TEST_MODE is active. Changes will not be applied.")
 
@@ -797,43 +735,3 @@ class tree(object):
             tok = self.lexer.lexer.token()
             if not tok:
                 break
-
-    # def loads(self):
-    #     """[summary]
-    #     """
-    #     with open(self.file_name, 'r') as f:
-    #         return f.read()
-
-    # @staticmethod
-    # def _(self, tree_string: str, test: bool = False):
-    #     """[creates files and directories based on the given rules ]
-
-    #     Args:
-    #         tree (str): [rules to create files and directories]
-    #     """
-    # self.lexer = Lex()
-    # self.lexer.lexer.input(tree_string)
-    # while True:
-    #     tok = self.lexer.lexer.token()
-    #     if not tok:
-    #         break
-
-
-"""
-class d_():
-    def __init__(self, name, *args, **kwargs):
-        self.name = name
-        self.args = args
-        self.kwargs = kwargs
-    def __str__(self):
-        return f'+{self.name}{self.args}, {self.kwargs})' # TODO - colon / read only
-
-
-class f_():
-    def __init__(self, name, *args, **kwargs):
-        self.name = name
-        self.args = args
-        self.kwargs = kwargs
-    def __str__(self):
-        return f'+{self.name}{self.args}, {self.kwargs})'
-"""

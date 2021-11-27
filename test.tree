@@ -1,3 +1,10 @@
++tmp2
+    +why
+        now.txt
+
+# new bug in multi root dirs.< root should reset all vars reliably.
+# it appears to go 1 higher in some cases. i.e. tmp is created. but writing to desktop??!? 2 dirs higher
+
 +tmp
     +hello
         world.txt < y tho!
@@ -12,3 +19,10 @@
     +partial
         star.html $ curl -s -r 32-35 https://raw.githubusercontent.com/byteface/domonic/master/docs/_templates/sidebarintro.html
     files.txt $ find .
+
+# emtpy line should also refresh all vars. # should also fail if not starting from left
+
++somedir # new bug. root dirs fucked again
+    somescript.py < print('hello world!')
+    some.txt < hello world!
+    script.sh < echo 'hello world'
