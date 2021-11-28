@@ -17,11 +17,10 @@ from sharpshooter import tree
 
 # TODO - add asserts for all the functions
 
+
 class TestCase(unittest.TestCase):
 
-
     def test_tree(self):
-
 
 #         s1 = """
 # +:dir
@@ -59,7 +58,7 @@ class TestCase(unittest.TestCase):
             file1# this is a file
         file2
         """
-    
+
         import os
         # change to project root
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -72,13 +71,11 @@ class TestCase(unittest.TestCase):
 
         # make sure plugins is inside dir
         self.assertFalse(os.path.isdir(os.path.join(os.getcwd(), 'plugins')))
-        
+
         # check if files exist
         # self.assertTrue(os.path.isfile(os.path.join(os.getcwd(), 'dir/plugins', 'mail', 'file3')))
 
-
     def test_minus(self):
-    
         # NOTE - should now handle being tabbed in.
         s1 = """
         +:dir
@@ -118,20 +115,15 @@ class TestCase(unittest.TestCase):
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
         tree(s1, test=True)
 
-
-
     def test_colon(self):
-        
         # we want the same info
-        # -rw-r--r--@ 1 byteface  staff  2100 21 Sep 07:58 README.md        
-        
+        # -rw-r--r--@ 1 byteface  staff  2100 21 Sep 07:58 README.md
         # To read info about a file or folder without creation use colon :
 
         test = tree('''
         :README.md
         ''')
         print(f"{test}")
-
 
         test = tree('''
         :venv
@@ -153,9 +145,7 @@ class TestCase(unittest.TestCase):
                 :this
         ''')
 
-
     def test_testmode(self):
-        
         # test mode true. things wont get created
         s1 = """
         +DONT
@@ -181,7 +171,6 @@ class TestCase(unittest.TestCase):
         tree(s1, test=True)
 
     def test_testmode_not_delete(self):
-        
         # same code as test mode. things will get created
         s1 = """
         +DONT
@@ -215,7 +204,6 @@ class TestCase(unittest.TestCase):
         tree(s2, test=False)
         # print('DONE!')
 
-
     def test_folders_with_spaces(self):
         # As much as I hate this. It's pefectly legal.
         s1 = """
@@ -225,6 +213,15 @@ class TestCase(unittest.TestCase):
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
         tree(s1, test=False)
 
+    def test_z(self):
+        # clean up
+        s1 = """
+        -dir
+        -file2
+        -MAKE THIS FOLDER
+        """
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        tree(s1, test=False)
 
     # def test_chmod(self):
     #     s1 = """
@@ -233,7 +230,6 @@ class TestCase(unittest.TestCase):
     #     """
     #     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     #     tree(s1, test=False)
-
 
     # def test_tilde(self):
     #     s1 = """

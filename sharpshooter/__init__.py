@@ -9,7 +9,7 @@
 
 """
 
-__version__ = "0.0.9"
+__version__ = "0.0.10"
 __license__ = "MIT"
 __author__ = "@byteface"
 
@@ -31,7 +31,7 @@ def term(cmd: str):
     Returns:
         str: the response as a string
     """
-    sslog("command: " + cmd)
+    sslog("    - command: " + cmd)
     if tree.TEST_MODE:
         sslog('TEST_MODE. command not run: ', cmd)
         return  # cmd
@@ -292,6 +292,7 @@ class Lex(object):
         "RPAREN",
         "COMMENT",
         "TILDE",
+        "BACKSLASH",
     )
 
     # Ignored characters
@@ -318,10 +319,14 @@ class Lex(object):
         # basically. lines with spaces cause flags to be set, however if there's no space, no flags get checked
         # so for tree to have multiple root paths. we need to know if the oncoming line is a dir or file.
         # so if next char is not a space reset the tab count and depth
-        if t.lexer.lexdata[t.lexer.lexpos] != " ":
-            self.tab_count = 0
-            self.depth = 0
-            # note - we may have to reset more than just that. (keep an eye on this)
+        try:
+            if t.lexer.lexdata[t.lexer.lexpos] != " ":
+                self.tab_count = 0
+                self.depth = 0
+                # note - we may have to reset more than just that. (keep an eye on this)
+        except IndexError:
+            # we came to the end of the file
+            pass
 
         # TODO - root safety check
         # really should never allow cwd to be lower than root
@@ -341,6 +346,12 @@ class Lex(object):
         self.delete = True  # todo: - test it doesn't remove hyphenated words
 
     t_TIMES = r"\*"
+
+    t_BACKSLASH = r"\\"
+    # def t_BACKSLASH(self, t):
+    #     r"\\"
+    #     self.lexer.lexpos += 1 # no as this means we don't get the char
+    #     return t
 
     def t_WRITE(self, t):
         r"\<"
@@ -366,7 +377,7 @@ class Lex(object):
             self.last_file_created = self.last_file_created.strip()  # ensure remove trailing spaces
             with open(self.last_file_created, "w+", encoding="utf-8") as f:
                 f.write(content)
-                sslog('Writing into ', self.last_file_created)
+                sslog(f'    - Writing into {self.last_file_created}')
                 f.close()
             # sslog("wrote content into this file:", self.last_file_created)
 
@@ -400,7 +411,7 @@ class Lex(object):
         else:
             self.last_file_created = self.last_file_created.strip()  # ensure remove trailing spaces
             with open(self.last_file_created, "w") as f:
-                sslog('Writing to ', self.last_file_created)
+                sslog(f'    - Writing to {self.last_file_created}')
                 f.write(content)
                 f.close()
             # sslog("wrote content into this file:", self.last_file_created)
@@ -424,7 +435,7 @@ class Lex(object):
         # if not windows skip the rest of the line
         if os.name != 'nt':
             t.lexer.skip(original_cmd_len)
-            sslog("not windows::: skipping rest of line")
+            sslog("IGNORE not windows::: skipping rest of line")
             return
 
         # run a shell command with subprocess and return the result
@@ -513,7 +524,9 @@ class Lex(object):
 
     def t_FILE(self, t):
         # r"[a-zA-Z_][a-zA-Z_0-9.\-]*" # v1- doesn't allows spaces in filenames
-        r"[a-zA-Z_][a-zA-Z_0-9.\-]*([\w. ]*)"
+        # r"[a-zA-Z_][a-zA-Z_0-9.\-]*([\w. ]*)"
+        # r"[a-zA-Z_0-9.][a-zA-Z_0-9.\-]*([\w. ]*)"
+        r"[a-zA-Z_0-9.\-][a-zA-Z_0-9.\-]*([\w. ]*)"  # TODO - backslash token to allow starting with +-
 
         if self.cwd is None:
             self.cwd = os.getcwd()
@@ -587,9 +600,9 @@ class Lex(object):
                             return
                         else:
                             os.mkdir(os.path.join(self.cwd, folder_name))
-                            sslog("created folder", folder_name)
+                            sslog(f"Created folder: {self.cwd.replace(self.root, '')}{os.sep}{folder_name}")
                     else:
-                        sslog(f"{folder_name} already exists")
+                        sslog(f"Folder called {folder_name} already exists")
 
                     os.chdir(os.path.join(self.cwd, folder_name))
                     self.depth += 1
@@ -609,16 +622,15 @@ class Lex(object):
                 if not self.delete:
 
                     if tree.TEST_MODE:
-                        # TODO - doesn't windows have backslash? test on my other machine later
                         sslog(f"TEST_MODE: create file: {self.cwd}{os.sep}{file_name}")
                     else:
                         if not os.path.exists(os.path.join(self.cwd, file_name)):
                             with open(os.path.join(self.cwd, file_name), "w") as f:
                                 f.write("")  # t.value
                                 f.close()
-                            sslog("created file:", file_name)
+                            sslog(f"Created file: {self.cwd.replace(self.root, '')}{os.sep}{file_name}")
                         else:
-                            sslog("file already exists")
+                            sslog(f"File called {file_name} already exists.")
 
                     self.last_file_created = os.path.join(self.cwd, file_name)
                     self.last_file_created = self.last_file_created.strip()
@@ -652,18 +664,20 @@ class Lex(object):
     def _remove_file_or_folder(path: str):
 
         if tree.TEST_MODE:
-            sslog(f"TEST_MODE: removing file: {path}")
+            sslog(f"TEST_MODE: Remove file or folder {path} ")
             return
 
         # detect if its a file or folder
         if os.path.isfile(path):
             # remove it
             os.remove(path)
+            sslog(f"Removed file: {path}")
         elif os.path.isdir(path):
             # remove it even if it has contents
             shutil.rmtree(path)
-            # on windows
+            # on windows # ?? still not tested?
             # os.system('rmdir /S /Q "{}"'.format(path))
+            sslog(f"Removed folder: {path}")
         else:
             sslog("No file or folder could be found at", path)
             pass

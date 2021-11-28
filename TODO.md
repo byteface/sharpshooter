@@ -84,6 +84,16 @@ Udo
 ```
 
 
+# another optional way is it use f_ and d_ builder functions
+# TODO - this aint dont yet
+d_('somedir',
+    f_('file1', chmod=755),
+    d_('things', 'file2.txt', 'file3.txt')
+)
+
+
+
+
 notes...
 
 - various additions added as comments in the __main__.py file.
