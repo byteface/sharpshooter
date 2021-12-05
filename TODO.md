@@ -113,9 +113,19 @@ $ mv site.zip backups/site.zip
 
 ```
 
+# labels
 
+some way of labelling trees. so you can have more than 1 in a single .tree file. 
+and pass a lable via cmd to only run those lables.
 
+maybe could exist on notation of a comment that gets parsed?
 
+i.e #[somelabel]
+
+then you could do
+```
+sharpshooter -f myproj.tree -l somelabel
+```
 
 notes...
 
