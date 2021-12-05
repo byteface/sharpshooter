@@ -20,14 +20,20 @@ import shutil
 import ply.lex as lex
 import warnings
 
-import sys
-sys.stdout.encoding='utf-8'
-
-
-# warnings.warn("Warning...........Message")
-
-FOLDER_ICN = "\U0001F4C1"
-FILE_ICN = "\U0001F4DD"
+try:
+    FOLDER_ICN = "\U0001F4C1"
+    FILE_ICN = "\U0001F4DD"
+    ERR_ICN = "\U0000274C"
+    WARN_ICN = "\U000026A0"
+    OK_ICN = "\U00002714"
+    print(FOLDER_ICN, FILE_ICN, ERR_ICN, WARN_ICN, OK_ICN)
+except UnicodeEncodeError:
+    warnings.warn("Warning: Icons not supported.")
+    FOLDER_ICN = ""
+    FILE_ICN = ""
+    ERR_ICN = ""
+    WARN_ICN = ""
+    OK_ICN = ""
 
 
 def term(cmd: str):
@@ -111,25 +117,14 @@ def sslog(msg: str, *args, lvl: str = None, **kwargs):
     #     print(msg)
     #     sys.stdout = old_log
 
-    try:
-        if lvl is None:
-            print(msg, args, kwargs)
-        elif 'e' in lvl: # error
-            print(f"\U0000274C \033[1;41m{msg}\033[1;0m", args, kwargs)  #\U0000274C
-        elif 'w' in lvl: # warning
-            print(f"\U000026A0 \033[1;31m{msg}\033[1;0m", args, kwargs)  #\U000026A0 
-        elif 'g' in lvl: # green for good
-            print(f"\U00002714 \033[1;32m{msg}\033[1;0m", args, kwargs)  #\U00002714
-
-    except UnicodeEncodeError:
-        if lvl is None:
-            print(msg, args, kwargs)
-        elif 'e' in lvl: # error
-            print(f"\033[1;41m{msg}\033[1;0m", args, kwargs)
-        elif 'w' in lvl: # warning
-            print(f"\033[1;31m{msg}\033[1;0m", args, kwargs)
-        elif 'g' in lvl: # green for good
-            print(f"\033[1;32m{msg}\033[1;0m", args, kwargs)
+    if lvl is None:
+        print(msg, args, kwargs)
+    elif 'e' in lvl: # error
+        print(f"{ERR_ICN} \033[1;41m{msg}\033[1;0m", args, kwargs)  #\U0000274C
+    elif 'w' in lvl: # warning
+        print(f"{WARN_ICN} \033[1;31m{msg}\033[1;0m", args, kwargs)  #\U000026A0 
+    elif 'g' in lvl: # green for good
+        print(f"{OK_ICN} \033[1;32m{msg}\033[1;0m", args, kwargs)  #\U00002714
 
     # print(msg, args, kwargs)
 
