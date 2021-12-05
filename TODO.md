@@ -127,6 +127,16 @@ then you could do
 sharpshooter -f myproj.tree -l somelabel
 ```
 
+# variables for cmd line defaults i.e.
+--book="My Great Novel"
+--author="My Great Novel"
+--chapters=10
+
+
+# detect jinja and warn
+- if using jinja tags it needs to detect and warn if not plug or not running with -j flag
+
+
 notes...
 
 - various additions added as comments in the __main__.py file.

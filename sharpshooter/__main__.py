@@ -25,6 +25,8 @@ def parse_args():
     # parser.add_argument('-q', '--quiet', action='store_true')
     # parser.add_argument('-c', '--config', action='store')
     # parser.add_argument('-i', '--input', action='store_true') # create trees from terminal input
+    # parser.add_argument('-r', '--remove', action='store_true') # remove the tree file after creation
+    # parser.add_argument('-l', '--label', action='store_true') # only run the trees in the file that have a given label
     parser.add_argument(
         "-f",
         "--file",
@@ -110,7 +112,27 @@ def do_things(arguments):
         filename = f"{name}.tree"
         with open(filename, "w") as f:
             f.write(
-                """
+                """# **********************************************************************
+# **********************************************************************
+#        _                          _                 _            
+#       | |                        | |               | |           
+#    ___| |__   __ _ _ __ _ __  ___| |__   ___   ___ | |_ ___ _ __ 
+#   / __| '_ \ / _` | '__| '_ \/ __| '_ \ / _ \ / _ \| __/ _ \ '__|
+#   \__ \ | | | (_| | |  | |_) \__ \ | | | (_) | (_) | ||  __/ |   
+#   |___/_| |_|\__,_|_|  | .__/|___/_| |_|\___/ \___/ \__\___|_|   
+#                        | |                                       
+#                        |_|                                       
+#
+#   This is a sharpshooter .tree file.
+#
+#   For more info visit: 
+#   https://github.com/byteface/sharpshooter/
+#
+#   sharpshooter (tree) is open sourced under a MIT License
+#
+# **********************************************************************
+# **********************************************************************
+
 +hello
     world.txt
 """
