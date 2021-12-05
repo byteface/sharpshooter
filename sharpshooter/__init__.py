@@ -18,6 +18,9 @@ VERSION = __version__
 import os
 import shutil
 import ply.lex as lex
+import warnings
+
+# warnings.warn("Warning...........Message")
 
 
 def term(cmd: str):
@@ -462,6 +465,97 @@ class Lex(object):
     def t_COLON(self, t):
         r"\:"
         self.is_read_only = True
+
+    def t_QUESTION(self, t):
+        r"\?"
+        if self.is_extra:
+            # gets the question
+            question = t.lexer.lexdata[t.lexer.lexpos:]
+            if question.find("\n") != -1:
+                question = question[:question.find("\n")]
+            original_length = len(question)
+            question = '\n'.join(question.split('\\n'))
+            if question is not None and question != "":
+                if question[0] == " ":
+                    question = question[1:]
+            # print(question)
+            print("\n")
+            print("Editing: " + self.last_file_created)
+            print("************************************************************")
+            print("Multi-line editor: Use Ctrl-D or Ctrl-Z ( windows ) to save. (Ctrl-C open with vim instead)")
+            print("************************************************************")
+            print("\U0001F4DD Enter/Paste your content.")
+            print("************************************************************")
+
+            i_did_it_with_fucking_vim = False
+
+            import signal
+            original_sigint_handler = signal.getsignal(signal.SIGINT)
+
+            # if the file already exists. open it and put the contents on the screen
+            # TODO - this is still wrong as could get a file from ages ago?
+            if self.last_file_created is not None and self.last_file_created != "":
+                def signal_handler(sig, frame):
+                    os.system(f'sh & sudo vim {self.last_file_created}')
+
+                    nonlocal i_did_it_with_fucking_vim
+                    i_did_it_with_fucking_vim = True
+
+                    # return the signal handler to the default to stop triggering this function
+                    signal.signal(signal.SIGINT, original_sigint_handler)
+
+                    import asyncio
+                    async def main():
+                        await asyncio.sleep(1)
+                        pid = os.getpid()
+                        import subprocess
+                        # proc for this python process
+                        proc = subprocess.Popen(['ps', '-ef'], stdout=subprocess.PIPE)
+                        
+                        
+                        process.send_signal(signal.SIGINT, pid)
+
+                    asyncio.run(main())
+                    # print('press Ctrl+D to save!')< now we dont need this
+
+                # print("This file is already exists.
+                # print("You can edit it with vim or create a new one.")
+                # print("1. Edit the file with vim.")
+                # print("2. Create a new file.")
+                # in = input("Enter 1 or 2: ")
+                # if in == "1":
+
+                signal.signal(signal.SIGINT, signal_handler)
+                # print('Press Ctrl+C')
+                # signal.pause()
+
+            contents = []
+            while True:
+                try:
+                    line = input()
+                except EOFError:
+                    break
+                contents.append(line)
+            content = '\n'.join(contents)
+            # print the path to the file just created
+            # sslog('Write content into this file:', self.last_file_created)
+
+            print('i_did_it_with_fucking_vim')
+            if i_did_it_with_fucking_vim:
+                t.lexer.skip(original_length)
+                return
+
+            if tree.TEST_MODE:
+                sslog('TEST_MODE1: skip writing content into this file:', self.last_file_created)
+            else:
+                self.last_file_created = self.last_file_created.strip()  # ensure remove trailing spaces
+                with open(self.last_file_created, "w+", encoding="utf-8") as f:
+                    f.write(content)
+                    sslog(f'    - Writing into {self.last_file_created}')
+                    f.close()
+                # sslog("wrote content into this file:", self.last_file_created)
+
+            t.lexer.skip(original_length)
 
     def t_TAB(self, t):
         r"[\t]+"

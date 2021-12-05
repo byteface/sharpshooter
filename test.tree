@@ -32,6 +32,14 @@
     +templates
         404.html
 
++newtest
+    #myfile.py ? maybe have a question?
+    myfile.py < #HOSTNAME \n#PASSWORD \n#USER
+    myfile2.py ?
+    doanotherthing.txt
+    doanotherthing2.txt < and this
+    folder
+        with.png
 
 # clean up
 # -tmp
