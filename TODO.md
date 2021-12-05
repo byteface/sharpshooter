@@ -92,6 +92,29 @@ d_('somedir',
 )
 
 
+# using forward slash or tilde to set root dir? not sure where that note went. might be a ticket.
+(tilde already used for home)
+
+```
+/start/from/here
+
+```
+
+
+# over ssh ?
+could tie in to the forward slash. or use a pipe?
+
+```
+| USERNAME@ADRESS:/var/www
+$ zip -r site.zip /app/staging/site/
++backups
+    (DATE).txt < taking a snapshot
+$ mv site.zip backups/site.zip
+
+```
+
+
+
 
 
 notes...

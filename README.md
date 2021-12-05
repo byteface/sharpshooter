@@ -9,9 +9,23 @@ Shorthand templates for creating (or destroying) file-systems.
 
 tree could be written for any language.
 
+## install
+
 ```bash
-python3 -m pip install sharpshooter --upgrade
-python3 -m pip install sharpshooter[jinja2] --upgrade  # for the jinja2 cli extension
+python3 -m pip install sharpshooter --upgrade  # for just sharpshooter
+python3 -m pip install sharpshooter[jinja2]  # sharpshooter with jinja2 cli extension
+```
+
+## CLI quick start
+
+```bash
+cd /path/to/some/folder
+sharpshooter -c hello
+# now open and edit the created hello.tree file in any text editor of your choice
+# i.e sudo vim hello.tree
+sharpshooter -t hello.tree  # run this to test
+sharpshooter -f hello.tree  # or this to create the tree
+sharpshooter -j hello.tree  # or this to preprocess with jinja2 before creation
 ```
 
 ## intro
@@ -49,7 +63,7 @@ putting it all together…
         file.py
 ```
 
-### Creating a tree
+### + (plus) Creating a tree
 
 ```python
 from sharpshooter import tree
@@ -68,7 +82,7 @@ tree('''
 
 tree doesn't wait to be told. Your files are now there.
 
-### deleting a tree
+### - (minus) deleting a tree
 
 tree can also remove dirs and files. You guessed it. With the the - minus symbol
 
@@ -96,9 +110,9 @@ tree = '''
 
 More on colons : later.
 
-**WARNING - be careful using minus. tree could destroy your entire filesytem if used incorrectly.**
+###### WARNING - be careful using minus. tree could destroy your entire filesytem if used incorrectly
 
-## comments
+### \# (hash) comments
 
 Use # to comment out a line or instruction.
 
@@ -111,9 +125,9 @@ s = '''
 '''
 ```
 
-**WARNING - the # symbol is ignored if it comes after the <, $ or > symbols. (see why further down)**
+###### WARNING - the # symbol is ignored if it comes after the <, $ or > symbols. (see why further down)
 
-## read only
+### : (colon) read only
 
 To read info about a file or folder, without creating any, use a colon ':'
 
@@ -161,7 +175,7 @@ tree('''
 
 up to you.
 
-## test mode
+### test mode
 
 If you are feeling unsure. Try tree in test mode.
 
@@ -184,7 +198,7 @@ tree(mytree, test=True)  # notice how we set test=True
 
 Now you can check the console and if you feel confident set test=False and run the code again.
 
-## tilde
+### ~ (tilde) users home direcory
 
 users home path is supported. (* TODO - not yet tested on pc)
 
@@ -199,7 +213,7 @@ users home path is supported. (* TODO - not yet tested on pc)
     tree(s1, test=False)
 ```
 
-## less than symbol <
+### < (lt) write to a file
 
 < This symbol can be used to write a string to a file.
 
@@ -223,9 +237,9 @@ you can use \n to add more than one line to a file.
     tree(mystring)
 ```
 
-**WARNING - the comment # symbols are ignored after the < so they can be succesfully written to files. (i.e. .md files)**
+###### WARNING - the comment # symbols are ignored after the < so they can be succesfully written to files. (i.e. .md files)
 
-## dollar symbol $
+### $ (dollar) pass to the shell
 
 Anything after the $ symbol is passed to the shell and the result is written to the file.
 
@@ -237,9 +251,9 @@ Anything after the $ symbol is passed to the shell and the result is written to 
     tree(mystring)
 ```
 
-**WARNING - comments # symbol is ignored after the $ so don't use comments on these lines or they could be sent to the terminal**
+###### WARNING - comments # symbol is ignored after the $ so don't use comments on these lines or they could be sent to the terminal
 
-## greater than symbol > (TODO - NOT TESTED YET)
+### > (gt) pass to windows cmd (TODO - NOT TESTED YET)
 
 bash commands won't work on windows. Instead use the > symbol for windows commands
 
@@ -254,10 +268,10 @@ Anything after the > symbol is passed to cmd with the result written to the file
     tree(mystring)
 ```
 
-**WARNING - comments # symbol is ignored after the > so don't use comments on these lines or they could be sent to cmd**
+###### WARNING - comments # symbol is ignored after the > so don't use comments on these lines or they could be sent to cmd
 
 
-## ? (TODO - not test on pc yet)
+### ? (question) (TODO - not test on pc yet)
 
 A question will take user input. It can be used in place of a filename.
 
@@ -279,7 +293,7 @@ Then a multi-line prompt would ask for content to be input for anotherfile.txt.
 
 Lastly a prompt would ask for the folder name to be created before putting info.txt in it.
 
-**WARNING - comments # symbol is ignored after the > so don't use comments on these lines or they could be sent to cmd**
+###### WARNING - comments # symbol is ignored after the > so don't use comments on these lines or they could be sent to cmd
 
 
 ## Anything else?
