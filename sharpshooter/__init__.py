@@ -117,8 +117,7 @@ def sslog(msg: str, *args, lvl: str = None, **kwargs):
 
     except UnicodeEncodeError:
         print('unicode error')        
-        print(ERR.encode('utf-8'))
-        print(ERR.encode('utf-8').decode('utf-8'))
+        print("OY OY ------->>>>>>>>>>>>", ERR.encode('utf-8'))
 
     if lvl is None:
         print(msg, args, kwargs)
