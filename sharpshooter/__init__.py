@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: latin-1 -*-
 """
     tree (sharpshooter)
     ====================================
@@ -108,14 +108,26 @@ def sslog(msg: str, *args, lvl: str = None, **kwargs):
     #     print(msg)
     #     sys.stdout = old_log
 
+    ERR = '\U0000274C'
+    try:
+        # print('\U0000274C')
+        # print('\U000026A0')
+        # print('\U00002714')
+        print(ERR)
+
+    except UnicodeEncodeError:
+        print('unicode error')        
+        print(ERR.encode('utf-8'))
+        print(ERR.encode('utf-8').decode('utf-8'))
+
     if lvl is None:
         print(msg, args, kwargs)
     elif 'e' in lvl: # error
-        print(f"\U0000274C \033[1;41m{msg}\033[1;0m", args, kwargs)
+        print(f"\033[1;41m{msg}\033[1;0m", args, kwargs)  #\U0000274C
     elif 'w' in lvl: # warning
-        print(f"\U000026A0 \033[1;31m{msg}\033[1;0m", args, kwargs)
+        print(f"\033[1;31m{msg}\033[1;0m", args, kwargs)  #\U000026A0 
     elif 'g' in lvl: # green for good
-        print(f"\U00002714 \033[1;32m{msg}\033[1;0m", args, kwargs)
+        print(f"\033[1;32m{msg}\033[1;0m", args, kwargs)  #\U00002714
 
     # print(msg, args, kwargs)
 
