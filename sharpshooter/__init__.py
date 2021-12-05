@@ -825,7 +825,7 @@ class tree(object):
             test (bool, optional): [if true, will not actually create files or folders]. Defaults to False.
 
         """
-        sslog("\U0001F333 tree")
+        sslog("tree")
         tree.TEST_MODE = test
         tree_string = tree_string.replace("\t", "    ")  # force tabs to 4 spaces
         if tree.TEST_MODE:
