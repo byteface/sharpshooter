@@ -107,13 +107,7 @@ def sslog(msg: str, *args, lvl: str = None, **kwargs):
     #     print(msg)
     #     sys.stdout = old_log
 
-    # ERR = '\U0000274C'
     try:
-        # print('\U0000274C')
-        # print('\U000026A0')
-        # print('\U00002714')
-        # print(ERR)
-
         if lvl is None:
             print(msg, args, kwargs)
         elif 'e' in lvl: # error
@@ -124,18 +118,14 @@ def sslog(msg: str, *args, lvl: str = None, **kwargs):
             print(f"\U00002714 \033[1;32m{msg}\033[1;0m", args, kwargs)  #\U00002714
 
     except UnicodeEncodeError:
-        # print('unicode error')
-        # TODO - im not a windows user. these show up fine on my windows. but liked by github workflow.
-        # so if fail on emojis dont use them. until i get an answer to why
-        # also weird it didn't fail on file/folder codes?. maybe as the range they are in.
         if lvl is None:
             print(msg, args, kwargs)
         elif 'e' in lvl: # error
-            print(f"\033[1;41m{msg}\033[1;0m", args, kwargs)  #\U0000274C
+            print(f"\033[1;41m{msg}\033[1;0m", args, kwargs)
         elif 'w' in lvl: # warning
-            print(f"\033[1;31m{msg}\033[1;0m", args, kwargs)  #\U000026A0 
+            print(f"\033[1;31m{msg}\033[1;0m", args, kwargs)
         elif 'g' in lvl: # green for good
-            print(f"\033[1;32m{msg}\033[1;0m", args, kwargs)  #\U00002714
+            print(f"\033[1;32m{msg}\033[1;0m", args, kwargs)
 
     # print(msg, args, kwargs)
 
