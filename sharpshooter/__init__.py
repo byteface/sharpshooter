@@ -1,3 +1,4 @@
+# coding: utf8
 """
     tree (sharpshooter)
     ====================================
@@ -107,15 +108,14 @@ def sslog(msg: str, *args, lvl: str = None, **kwargs):
     #     print(msg)
     #     sys.stdout = old_log
 
-    # TODO - color the logs?
     if lvl is None:
         print(msg, args, kwargs)
     elif 'e' in lvl: # error
-        print(f"\U0000274C \033[1;41m{msg}\033[1;0m", args, kwargs)
+        print(f"\U0000274C \033[1;41m{msg}\033[1;0m".encode('Cp1252'), args, kwargs)
     elif 'w' in lvl: # warning
-        print(f"\U000026A0 \033[1;31m{msg}\033[1;0m", args, kwargs)
+        print(f"\U000026A0 \033[1;31m{msg}\033[1;0m".encode('Cp1252'), args, kwargs)
     elif 'g' in lvl: # green for good
-        print(f"\U00002714 \033[1;32m{msg}\033[1;0m", args, kwargs)
+        print(f"\U00002714 \033[1;32m{msg}\033[1;0m".encode('Cp1252'), args, kwargs)
 
     # print(msg, args, kwargs)
 
