@@ -1,0 +1,12 @@
++{{replaceme}}
+    {% for n in range(20) %}
+    image{{n}}.png
+    {% endfor %}
+
++{{andme}}
+    +{{metoo}}
+        +{{methree}}
+
+
+# i.e. to run this do:
+# python -m sharpshooter -j testjinja.tree replaceme=john andme=ringo metoo=paul methree=george

@@ -38,10 +38,25 @@
     myfile2.py ?
     doanotherthing.txt
     doanotherthing2.txt < and this
-    folder
+    +folder
         with.png
+    # input a filename
+    ? < test adding content to a new file
+    test.png
+    # input a folder name
+    +?
+    # input filename and content
+    ? ?
+    # input a folder name and put a png into the newly created folder
+    +?
+        file.png
+
 
 # clean up
 # -tmp
 # -tmp2
 # -proj
+
+
+# i.e. to run this do:
+# python -m sharpshooter -t test.tree

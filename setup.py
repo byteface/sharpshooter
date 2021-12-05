@@ -1,7 +1,11 @@
 from setuptools import setup, find_packages
 
+JINJA2_REQUIREMENTS = [
+    'jinja2==3.0.3',
+]
+
 with open("README.md", "r") as f:
-        long_description=f.read()
+    long_description=f.read()
 
 from sharpshooter import __version__
 version = __version__
@@ -39,6 +43,9 @@ setup(
   install_requires=[
           'ply==3.11'
   ],
+  extras_require={
+         'jinja2': JINJA2_REQUIREMENTS,
+  },
   packages=find_packages(),
   include_package_data=True,
   entry_points={
@@ -46,5 +53,5 @@ setup(
           'sharpshooter = sharpshooter.__main__:run',
       ],
   },
-  
+
 )

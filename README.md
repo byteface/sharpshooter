@@ -11,6 +11,7 @@ tree could be written for any language.
 
 ```bash
 python3 -m pip install sharpshooter --upgrade
+python3 -m pip install sharpshooter[jinja2] --upgrade  # for the jinja2 cli extension
 ```
 
 ## intro
@@ -255,6 +256,32 @@ Anything after the > symbol is passed to cmd with the result written to the file
 
 **WARNING - comments # symbol is ignored after the > so don't use comments on these lines or they could be sent to cmd**
 
+
+## ? (TODO - not test on pc yet)
+
+A question will take user input. It can be used in place of a filename.
+
+```python
+    mystring = """
+    +somedir
+        somefile.txt
+        ?
+        anotherfile.txt ?
+        +?
+            info.txt
+    """
+    tree(mystring)
+```
+
+In this example a prompt would ask for a filename inbetween creating somefile.txt and anotherfile.txt.
+
+Then a multi-line prompt would ask for content to be input for anotherfile.txt.
+
+Lastly a prompt would ask for the folder name to be created before putting info.txt in it.
+
+**WARNING - comments # symbol is ignored after the > so don't use comments on these lines or they could be sent to cmd**
+
+
 ## Anything else?
 
 - you can now have spaces in filenames.
@@ -272,6 +299,10 @@ python3 -m sharpshooter --version  # shows the current version. also uses -v
 ```
 
 ```bash
+sharpshooter --create someconfigname  # creates a helloworld.tree file. also uses -c
+```
+
+```bash
 sharpshooter --file myconfig.tree  # parses a .tree file and executes it. also uses -f
 ```
 
@@ -279,9 +310,16 @@ sharpshooter --file myconfig.tree  # parses a .tree file and executes it. also u
 sharpshooter --test anotherconfig.tree  # parses a .tree file in test mode. also uses -t
 ```
 
+Finally there's an experimental feature that requires jinja2:
+
 ```bash
-sharpshooter --create someconfigname  # creates a helloworld.tree file. also uses -c
+python -m pip install jinja2  # make sure you have jinja2 installed
+sharpshooter --jinja myconfig.tree  # parses a .tree but runs through jinja first. also uses -j
 ```
+
+(note. jinja2 is not part of sharpshooter so you need to install it yourself. its an optional CLI dependency)
+(note. jinja2 has no test mode yet so be careful)
+
 
 ## NOTES
 

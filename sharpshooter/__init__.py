@@ -9,7 +9,7 @@
 
 """
 
-__version__ = "0.0.10"
+__version__ = "0.0.11"
 __license__ = "MIT"
 __author__ = "@byteface"
 
@@ -482,52 +482,15 @@ class Lex(object):
             print("\n")
             print("Editing: " + self.last_file_created)
             print("************************************************************")
-            print("Multi-line editor: Use Ctrl-D or Ctrl-Z ( windows ) to save. (Ctrl-C open with vim instead)")
+            print("Multi-line editor: then Ctrl-D or Ctrl-Z ( windows ) to save.")
+            print("TIP: Press Return for an empty newline BEFORE saving.")
             print("************************************************************")
             print("\U0001F4DD Enter/Paste your content.")
             print("************************************************************")
 
-            i_did_it_with_fucking_vim = False
-
-            import signal
-            original_sigint_handler = signal.getsignal(signal.SIGINT)
-
-            # if the file already exists. open it and put the contents on the screen
-            # TODO - this is still wrong as could get a file from ages ago?
-            if self.last_file_created is not None and self.last_file_created != "":
-                def signal_handler(sig, frame):
-                    os.system(f'sh & sudo vim {self.last_file_created}')
-
-                    nonlocal i_did_it_with_fucking_vim
-                    i_did_it_with_fucking_vim = True
-
-                    # return the signal handler to the default to stop triggering this function
-                    signal.signal(signal.SIGINT, original_sigint_handler)
-
-                    import asyncio
-                    async def main():
-                        await asyncio.sleep(1)
-                        pid = os.getpid()
-                        import subprocess
-                        # proc for this python process
-                        proc = subprocess.Popen(['ps', '-ef'], stdout=subprocess.PIPE)
-                        
-                        
-                        process.send_signal(signal.SIGINT, pid)
-
-                    asyncio.run(main())
-                    # print('press Ctrl+D to save!')< now we dont need this
-
-                # print("This file is already exists.
-                # print("You can edit it with vim or create a new one.")
-                # print("1. Edit the file with vim.")
-                # print("2. Create a new file.")
-                # in = input("Enter 1 or 2: ")
-                # if in == "1":
-
-                signal.signal(signal.SIGINT, signal_handler)
-                # print('Press Ctrl+C')
-                # signal.pause()
+            # TODO - you can't pass existing file content into the input easily
+            # i do have a branch that can break into vim and return.
+            # but that wont work for windows. so will have a think about it.
 
             contents = []
             while True:
@@ -537,13 +500,6 @@ class Lex(object):
                     break
                 contents.append(line)
             content = '\n'.join(contents)
-            # print the path to the file just created
-            # sslog('Write content into this file:', self.last_file_created)
-
-            print('i_did_it_with_fucking_vim')
-            if i_did_it_with_fucking_vim:
-                t.lexer.skip(original_length)
-                return
 
             if tree.TEST_MODE:
                 sslog('TEST_MODE1: skip writing content into this file:', self.last_file_created)
@@ -556,6 +512,14 @@ class Lex(object):
                 # sslog("wrote content into this file:", self.last_file_created)
 
             t.lexer.skip(original_length)
+        else:
+            filetype = 'folder' if self.is_dir else 'file'
+            print('What would you like the ' + filetype + ' to be called?')
+            line = input()
+            class mock():
+                value = line
+            t = mock()
+            self.t_FILE(t)
 
     def t_TAB(self, t):
         r"[\t]+"
@@ -684,6 +648,10 @@ class Lex(object):
             else:
 
                 if not self.delete:
+
+                    # Note - maybe check the path that exists actually is a folder?
+                    # and it was a file created in error. if file then ask to delete it?
+
                     if not os.path.exists(os.path.join(self.cwd, folder_name)):
                         if tree.TEST_MODE:
                             sslog(

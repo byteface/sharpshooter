@@ -25,8 +25,20 @@ def parse_args():
     # parser.add_argument('-q', '--quiet', action='store_true')
     # parser.add_argument('-c', '--config', action='store')
     # parser.add_argument('-i', '--input', action='store_true') # create trees from terminal input
-    parser.add_argument("-f", "--file", nargs="?", type=argparse.FileType("r"))
-    parser.add_argument("-t", "--test", nargs="?", type=argparse.FileType("r"))
+    parser.add_argument(
+        "-f",
+        "--file",
+        help="Create a directory structure from a .tree file",
+        nargs="?",
+        type=argparse.FileType("r")
+    )
+    parser.add_argument(
+        "-t",
+        "--test",
+        help="test mode won't write to the filesystem",
+        nargs="?",
+        type=argparse.FileType("r")
+    )
     parser.add_argument(
         "-c",
         "--create",
@@ -34,6 +46,13 @@ def parse_args():
         type=str,
         nargs="?",
         default="helloworld",
+    )
+    parser.add_argument(
+        "-j",
+        "--jinja",
+        help="Create a directory structure from a .tree file. But passes through Jinja first.",
+        nargs="*",
+        type=str
     )
 
     args = parser.parse_args()
@@ -43,7 +62,6 @@ def parse_args():
 def do_things(arguments):
     if arguments.version is True:
         from sharpshooter import __version__
-
         print(__version__)
         return __version__
     if arguments.test is not None:
@@ -54,12 +72,37 @@ def do_things(arguments):
         tree(filecontent, test=True)
         return
     if arguments.file is not None:
+        # TODO - if no file passed find one called .tree and use it anyway? at least ask for confirmation
         filecontent = ""
         with open(arguments.file.name, "r") as f:
             filecontent = f.read()
             f.close()
         tree(filecontent)
         return
+
+    if arguments.jinja is not None:
+        try:
+            from jinja2 import Environment, FileSystemLoader
+        except ImportError:
+            raise ImportError("This option requires Jinja2 to be installed")
+        filecontent = ""
+        kwargs = {}
+        args = arguments.jinja
+        tmpfile = args.pop(0)
+        # print(tmpfile, args)
+        for arg in args:
+            key, val = arg.split("=")
+            kwargs[key] = val
+        env = Environment(
+            loader=FileSystemLoader(searchpath="./")
+        )
+        template = env.get_template(tmpfile)
+        # print(kwargs)
+        filecontent = template.render(**kwargs)
+        tree(filecontent)
+        return
+    # sharpshooter -j testjinja.tree replaceme=somefolder andme=another count=20
+
     if arguments.create is not None:
         name = "helloworld"
         if arguments.create is not None:
