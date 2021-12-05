@@ -20,6 +20,10 @@ import shutil
 import ply.lex as lex
 import warnings
 
+import sys
+sys.stdout.encoding='utf-8'
+
+
 # warnings.warn("Warning...........Message")
 
 FOLDER_ICN = "\U0001F4C1"
