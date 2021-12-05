@@ -196,21 +196,21 @@ tree(mytree, test=True)  # notice how we set test=True
 
 ```
 
-Now you can check the console and if you feel confident set test=False and run the code again.
+Now check the console and if you feel confident set test=False and run the code again.
 
 ### ~ (tilde) users home direcory
 
-users home path is supported. (* TODO - not yet tested on pc)
+users home path is supported.
 
 ```python
-    s1 = """
-    :+~
-        test.png
-        +somedir
-            somescript.py
-    """
-    tree(s1, test=True)
-    tree(s1, test=False)
+s1 = """
+:+~
+    test.png
+    +somedir
+        somescript.py
+"""
+tree(s1, test=True)
+tree(s1, test=False)
 ```
 
 ### < (lt) write to a file
@@ -218,23 +218,23 @@ users home path is supported. (* TODO - not yet tested on pc)
 < This symbol can be used to write a string to a file.
 
 ```python
-    mystring = """
-    +somedir
-        somescript.py < print('hello world!')
-        some.txt < hello world!
-        script.sh < echo 'hello world'
-    """
-    tree(mystring)
+mystring = """
++somedir
+    somescript.py < print('hello world!')
+    some.txt < hello world!
+    script.sh < echo 'hello world'
+"""
+tree(mystring)
 ```
 
 you can use \n to add more than one line to a file.
 
 ```python
-    mystring = """
-    +somedir
-        somepage.md < # heading \n## another heading \n### and another heading
-    """
-    tree(mystring)
+mystring = """
++somedir
+    somepage.md < # heading \n## another heading \n### and another heading
+"""
+tree(mystring)
 ```
 
 ###### WARNING - the comment # symbols are ignored after the < so they can be succesfully written to files. (i.e. .md files)
@@ -244,47 +244,47 @@ you can use \n to add more than one line to a file.
 Anything after the $ symbol is passed to the shell and the result is written to the file.
 
 ```python
-    mystring = """
-    +somedir
-        test.txt $ cowsay moo
-    """
-    tree(mystring)
+mystring = """
++somedir
+    test.txt $ cowsay moo
+"""
+tree(mystring)
 ```
 
 ###### WARNING - comments # symbol is ignored after the $ so don't use comments on these lines or they could be sent to the terminal
 
-### > (gt) pass to windows cmd (TODO - NOT TESTED YET)
+### > (gt) pass to windows cmd
 
 bash commands won't work on windows. Instead use the > symbol for windows commands
 
 Anything after the > symbol is passed to cmd with the result written to the file.
 
 ```python
-    mystring = """
-    +somedir
-        test.txt $ ls -al
-        test.txt > dir
-    """
-    tree(mystring)
+mystring = """
++somedir
+    test.txt $ ls -al
+    test.txt > dir
+"""
+tree(mystring)
 ```
 
 ###### WARNING - comments # symbol is ignored after the > so don't use comments on these lines or they could be sent to cmd
 
 
-### ? (question) (TODO - not test on pc yet)
+### ? (question)
 
 A question will take user input. It can be used in place of a filename.
 
 ```python
-    mystring = """
-    +somedir
-        somefile.txt
-        ?
-        anotherfile.txt ?
-        +?
-            info.txt
-    """
-    tree(mystring)
+mystring = """
++somedir
+    somefile.txt
+    ?
+    anotherfile.txt ?
+    +?
+        info.txt
+"""
+tree(mystring)
 ```
 
 In this example a prompt would ask for a filename inbetween creating somefile.txt and anotherfile.txt.
@@ -359,7 +359,7 @@ To dev on this one locally just pull the repo and do...
 
 ```bash
 python3 -m venv venv
-. venv/bin/activate
+. venv/bin/activate  # lnux, # windows: venv\Scripts\activate 
 pip install -r requirements.txt 
 python3 -m sharpshooter -f test.tree
 # to use venv version without installing

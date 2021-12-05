@@ -9,7 +9,7 @@
 
 """
 
-__version__ = "0.0.11"
+__version__ = "0.0.12"
 __license__ = "MIT"
 __author__ = "@byteface"
 
@@ -21,6 +21,9 @@ import ply.lex as lex
 import warnings
 
 # warnings.warn("Warning...........Message")
+
+FOLDER_ICN = "\U0001F4C1"
+FILE_ICN = "\U0001F4DD"
 
 
 def term(cmd: str):
@@ -36,7 +39,7 @@ def term(cmd: str):
     """
     sslog("    - command: " + cmd)
     if tree.TEST_MODE:
-        sslog('TEST_MODE. command not run: ', cmd)
+        sslog('TEST_MODE', 'command not run:', cmd, lvl='w')
         return  # cmd
     import subprocess
     returned_output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
@@ -90,7 +93,7 @@ def term(cmd: str):
 #         return self.data
 
 
-def sslog(msg: str, lvl: str = None, *args, **kwargs):
+def sslog(msg: str, *args, lvl: str = None, **kwargs):
     """logging for sharpshooter"""
 
     if tree.QUIET_MODE:
@@ -105,13 +108,16 @@ def sslog(msg: str, lvl: str = None, *args, **kwargs):
     #     sys.stdout = old_log
 
     # TODO - color the logs?
-    # if lvl is None:
-    #     print(msg)
-    # elif lvl == "error":
-    #     print(f"\033[1;41m{msg}\033[1;0m", args, kwargs)
-    # elif lvl == "warning":
-    #     print(f"\033[1;31m{msg}\033[1;0m", args, kwargs)
-    print(msg, args, kwargs)
+    if lvl is None:
+        print(msg, args, kwargs)
+    elif 'e' in lvl: # error
+        print(f"\U0000274C \033[1;41m{msg}\033[1;0m", args, kwargs)
+    elif 'w' in lvl: # warning
+        print(f"\U000026A0 \033[1;31m{msg}\033[1;0m", args, kwargs)
+    elif 'g' in lvl: # green for good
+        print(f"\U00002714 \033[1;32m{msg}\033[1;0m", args, kwargs)
+
+    # print(msg, args, kwargs)
 
 
 def octal_to_text(octal) -> str:
@@ -180,7 +186,7 @@ def get_file_info(path: str, filename: str) -> dict:
         owner = owner.pw_name
     except ModuleNotFoundError:
         owner = stat.st_uid
-        sslog("WINDOWS:::::", owner)
+        sslog("WINDOWS:::::" + owner, 'w')
 
         # from pathlib import Path
         # path = Path(fileinfo['path'])
@@ -209,7 +215,7 @@ def get_file_info(path: str, filename: str) -> dict:
         # import getpass
         # group = getpass.getuser()
         group = stat.st_gid
-        sslog("WINDOWS:::::", group)
+        sslog("WINDOWS:::::" + group, 'w')
     except:
         group = stat.st_gid
 
@@ -375,7 +381,7 @@ class Lex(object):
         # print the path to the file just created
         # sslog('Write content into this file:', self.last_file_created)
         if tree.TEST_MODE:
-            sslog('TEST_MODE1: skip writing content into this file:', self.last_file_created)
+            sslog('TEST_MODE', 'skip writing content into this file:', self.last_file_created, lvl='w')
         else:
             self.last_file_created = self.last_file_created.strip()  # ensure remove trailing spaces
             with open(self.last_file_created, "w+", encoding="utf-8") as f:
@@ -402,7 +408,7 @@ class Lex(object):
         # if windows skip the line
         if os.name == 'nt':
             t.lexer.skip(original_cmd_len)
-            sslog("skipping bash line on windows")
+            sslog("skipping bash line on windows", 'warn')
             return
 
         # run a shell command with subprocess and return the result
@@ -410,7 +416,7 @@ class Lex(object):
 
         # sslog('write content into this file:', self.last_file_created)
         if tree.TEST_MODE:
-            sslog('TEST_MODE2: skip writing content into this file:', self.last_file_created)
+            sslog('TEST_MODE', 'skip writing content into this file:', self.last_file_created, lvl='w')
         else:
             self.last_file_created = self.last_file_created.strip()  # ensure remove trailing spaces
             with open(self.last_file_created, "w") as f:
@@ -448,7 +454,7 @@ class Lex(object):
         # print the path to the file just created
         # sslog('write content into this file:', self.last_file_created)
         if tree.TEST_MODE:
-            sslog('TEST_MODE2: skip writing content into this file:', self.last_file_created)
+            sslog('TEST_MODE', 'skip writing content into this file:', self.last_file_created, lvl='w')
         else:
             self.last_file_created = self.last_file_created.strip()  # ensure remove trailing spaces
             with open(self.last_file_created, "w") as f:
@@ -479,14 +485,14 @@ class Lex(object):
                 if question[0] == " ":
                     question = question[1:]
             # print(question)
-            print("\n")
-            print("Editing: " + self.last_file_created)
-            print("************************************************************")
-            print("Multi-line editor: then Ctrl-D or Ctrl-Z ( windows ) to save.")
-            print("TIP: Press Return for an empty newline BEFORE saving.")
-            print("************************************************************")
-            print("\U0001F4DD Enter/Paste your content.")
-            print("************************************************************")
+            sslog("\n")
+            sslog("Editing: ", self.last_file_created, lvl='g')
+            sslog("************************************************************")
+            sslog("Multi-line editor: Ctrl-D or (Ctrl-Z then Return on windows) to save.")
+            sslog("TIP: Press Return for an empty newline BEFORE saving.")
+            sslog("************************************************************")
+            sslog("\U0001F4DD Enter/Paste your content.")
+            sslog("************************************************************")
 
             # TODO - you can't pass existing file content into the input easily
             # i do have a branch that can break into vim and return.
@@ -502,7 +508,11 @@ class Lex(object):
             content = '\n'.join(contents)
 
             if tree.TEST_MODE:
-                sslog('TEST_MODE1: skip writing content into this file:', self.last_file_created)
+                sslog(
+                    'TEST_MODE:', 
+                    'Skip writing content into this file:',
+                    self.last_file_created,
+                    lvl='w')
             else:
                 self.last_file_created = self.last_file_created.strip()  # ensure remove trailing spaces
                 with open(self.last_file_created, "w+", encoding="utf-8") as f:
@@ -552,7 +562,7 @@ class Lex(object):
         if self.tab_count < 0:
             self.tab_count = self.last_tab_count
             self.skip = True
-            sslog("Error. You can only put things in folders")
+            sslog("Error.", "You can only put things in folders", lvl='e')
             return
 
         if self.is_dead:
@@ -609,8 +619,10 @@ class Lex(object):
 
         if not self.was_dir and self.skip:
             sslog(
-                "Syntax Error. You can only create things inside a folder. skipping", t
-            )
+                "Syntax Error.",
+                "You can only create things inside a folder. skipping", 
+                t,
+                lvl='e')
             return
 
         if self.is_user_home:
@@ -639,7 +651,7 @@ class Lex(object):
 
                     remove the colon from the line if you want to create the folder
                     """
-                    )
+                    , lvl='e')
                     self.is_dead = True
                     self.dead_depth = self.depth
                     self.depth += 1
@@ -655,16 +667,18 @@ class Lex(object):
                     if not os.path.exists(os.path.join(self.cwd, folder_name)):
                         if tree.TEST_MODE:
                             sslog(
-                                f"TEST_MODE: create folder: {self.cwd}{os.sep}{folder_name}"
+                                "TEST_MODE:",
+                                f"{FOLDER_ICN} Create folder: {self.cwd}{os.sep}{folder_name}",
+                                lvl='w'
                             )
                             self.depth += 1
                             self.cwd += f"{os.sep}{folder_name}"
                             return
                         else:
                             os.mkdir(os.path.join(self.cwd, folder_name))
-                            sslog(f"Created folder: {self.cwd.replace(self.root, '')}{os.sep}{folder_name}")
+                            sslog(f"{FOLDER_ICN} Created folder: {self.cwd.replace(self.root, '')}{os.sep}{folder_name}", lvl='g')
                     else:
-                        sslog(f"Folder called {folder_name} already exists")
+                        sslog(f"Folder called {folder_name} already exists", lvl='w')
 
                     os.chdir(os.path.join(self.cwd, folder_name))
                     self.depth += 1
@@ -684,15 +698,23 @@ class Lex(object):
                 if not self.delete:
 
                     if tree.TEST_MODE:
-                        sslog(f"TEST_MODE: create file: {self.cwd}{os.sep}{file_name}")
+                        sslog(
+                            "TEST_MODE",
+                            f"{FILE_ICN} Create file: {self.cwd}{os.sep}{file_name}",
+                            lvl='w'
+                        )
                     else:
                         if not os.path.exists(os.path.join(self.cwd, file_name)):
                             with open(os.path.join(self.cwd, file_name), "w") as f:
                                 f.write("")  # t.value
                                 f.close()
-                            sslog(f"Created file: {self.cwd.replace(self.root, '')}{os.sep}{file_name}")
+                            sslog(
+                                f"{FILE_ICN} Created file:",
+                                f"{self.cwd.replace(self.root, '')}{os.sep}{file_name}",
+                                lvl='g'
+                            )
                         else:
-                            sslog(f"File called {file_name} already exists.")
+                            sslog(f"File called {file_name} already exists.", lvl='w')
 
                     self.last_file_created = os.path.join(self.cwd, file_name)
                     self.last_file_created = self.last_file_created.strip()
@@ -726,7 +748,7 @@ class Lex(object):
     def _remove_file_or_folder(path: str):
 
         if tree.TEST_MODE:
-            sslog(f"TEST_MODE: Remove file or folder {path} ")
+            sslog("TEST_MODE", f"Remove file or folder {path}", lvl='w')
             return
 
         # detect if its a file or folder
@@ -741,7 +763,7 @@ class Lex(object):
             # os.system('rmdir /S /Q "{}"'.format(path))
             sslog(f"Removed folder: {path}")
         else:
-            sslog("No file or folder could be found at", path)
+            sslog("No file or folder could be found at", path, lvl='w')
             pass
 
     # @staticmethod
@@ -799,11 +821,11 @@ class tree(object):
             test (bool, optional): [if true, will not actually create files or folders]. Defaults to False.
 
         """
-        sslog("tree")
+        sslog("\U0001F333 tree")
         tree.TEST_MODE = test
         tree_string = tree_string.replace("\t", "    ")  # force tabs to 4 spaces
         if tree.TEST_MODE:
-            sslog("TEST_MODE is active. Changes will not be applied.")
+            sslog("TEST_MODE", "testmode is active. Changes will not be applied.", lvl='w')
 
         self.lexer = Lex()
         self.lexer.lexer.input(tree_string)

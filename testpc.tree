@@ -1,0 +1,8 @@
+:+~
+    test.png
+    +somedir
+        somescript.py > dir
+
+
+# i.e. to run this do:
+# python -m sharpshooter -j testpc.tree
