@@ -186,7 +186,7 @@ def get_file_info(path: str, filename: str) -> dict:
         owner = owner.pw_name
     except ModuleNotFoundError:
         owner = stat.st_uid
-        sslog("WINDOWS:::::" + owner, 'w')
+        sslog("WINDOWS:::::", owner, 'w')
 
         # from pathlib import Path
         # path = Path(fileinfo['path'])
@@ -215,7 +215,7 @@ def get_file_info(path: str, filename: str) -> dict:
         # import getpass
         # group = getpass.getuser()
         group = stat.st_gid
-        sslog("WINDOWS:::::" + group, 'w')
+        sslog("WINDOWS:::::", group, 'w')
     except:
         group = stat.st_gid
 
@@ -725,7 +725,7 @@ class Lex(object):
                         Lex._remove_file_or_folder(os.path.join(self.cwd, file_name))
                         return
                     except Exception as e:
-                        sslog("could not delete file", e)
+                        sslog("could not delete file", lvl='e')
 
     def t_error(self, t):
         sslog(f"Illegal character {t.value[0]!r}")
@@ -748,20 +748,24 @@ class Lex(object):
     def _remove_file_or_folder(path: str):
 
         if tree.TEST_MODE:
-            sslog("TEST_MODE", f"Remove file or folder {path}", lvl='w')
+            sslog(
+                "TEST_MODE",
+                f"Remove file or folder {path}",
+                lvl='w'
+            )
             return
 
         # detect if its a file or folder
         if os.path.isfile(path):
             # remove it
             os.remove(path)
-            sslog(f"Removed file: {path}")
+            sslog(f"Removed file: {path}", lvl='g')
         elif os.path.isdir(path):
             # remove it even if it has contents
             shutil.rmtree(path)
             # on windows # ?? still not tested?
             # os.system('rmdir /S /Q "{}"'.format(path))
-            sslog(f"Removed folder: {path}")
+            sslog(f"Removed folder: {path}", lvl='g')
         else:
             sslog("No file or folder could be found at", path, lvl='w')
             pass
