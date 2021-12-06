@@ -46,10 +46,6 @@ TODO - colons for opening muli-line strings?
         Form this tab point
 
 
-TODO - substitute words on command line?
-+hello
-    cow.txt $ cowsay {{substitute}}
-
 TODO - << 2 chevrons to append to a file.
 
 
@@ -140,5 +136,8 @@ sharpshooter -f myproj.tree -l somelabel
 notes...
 
 - various additions added as comments in the __main__.py file.
-- ¥ needs to be pasted in terimnal . find an other shortcut symbol 🌳
+- ¥ needs to be pasted in terimnal . find an other shortcut symbol 🌳 \U0001F333
+https://raw.githubusercontent.com/carpedm20/emoji/master/emoji/unicode_codes/data_dict.py
+deciduous_tree
+
 - grep (much later) - maybe do some shorthand searching?

@@ -1,7 +1,42 @@
-:+~
-    test.png
-    +somedir
-        somescript.py > dir
+# :+~
+#     test.png
+#     +somedir
+#         somescript.py > dir
+
+#[donkey]
++somedir
+    somefile.txt < here some text
+    somefile.txt << here some more
+
+
+
+
+#[cat]
++somedir
+    somefile.txt << here a 3rd line
+    somefile.txt << and a forth line
+
+#[dog]
+$ echo 'hi'
+
+#[antelope]
+> dir
+
+### asdfasdfasdfasdfasd
+
+#][]
+
+#[horse fly]
++:somedir
+    somefile.txt << here a 3rd line
+    somefile.txt << and a forth line
+
+
+#[ring-tailed lemur]
++:somedir
+    somefile.txt << here a 3rd line
+    somefile.txt << and a forth line
+
 
 
 # i.e. to run this do:

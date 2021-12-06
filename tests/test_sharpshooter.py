@@ -195,6 +195,9 @@ class TestCase(unittest.TestCase):
         """
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
         tree(s1, test=False)
+        assert os.path.isdir(os.path.join(os.getcwd(), 'DONT', 'MAKE'))
+        assert os.path.isdir(os.path.join(os.getcwd(), 'DONT', 'WE', 'DONT', 'make'))
+        assert os.path.isdir(os.path.join(os.getcwd(), 'DONT', 'test', 'mode', 'wont', 'make'))
 
         # print('delete it')
         # aggressively delete the DON'T folder
@@ -203,7 +206,7 @@ class TestCase(unittest.TestCase):
         """
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
         tree(s2, test=False)
-        # print('DONE!')
+        assert os.path.isdir(os.path.join(os.getcwd(), 'DONT')) is False
 
     def test_folders_with_spaces(self):
         # As much as I hate this. It's pefectly legal.
@@ -213,6 +216,8 @@ class TestCase(unittest.TestCase):
         """
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
         tree(s1, test=False)
+        assert os.path.isdir(os.path.join(os.getcwd(), 'MAKE THIS FOLDER'))
+        assert os.path.isfile(os.path.join(os.getcwd(), 'MAKE THIS FOLDER', 'and This file.png'))
 
     def test_z(self):
         # clean up

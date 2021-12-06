@@ -21,14 +21,17 @@ import ply.lex as lex
 import warnings
 
 try:
+    TREE_ICN = "\U0001F333"
     FOLDER_ICN = "\U0001F4C1"
     FILE_ICN = "\U0001F4DD"
     ERR_ICN = "\U0000274C"
     WARN_ICN = "\U000026A0"
     OK_ICN = "\U00002714"
-    print(FOLDER_ICN, FILE_ICN, ERR_ICN, WARN_ICN, OK_ICN)
+    # TODO - this breaks 'quiet mode'
+    print(VERSION, TREE_ICN, FOLDER_ICN, FILE_ICN, ERR_ICN, WARN_ICN, OK_ICN)
 except UnicodeEncodeError:
     warnings.warn("Warning: Icons not supported.")
+    TREE_ICN = ""
     FOLDER_ICN = ""
     FILE_ICN = ""
     ERR_ICN = ""
@@ -49,7 +52,12 @@ def term(cmd: str):
     """
     sslog("    - command: " + cmd)
     if tree.TEST_MODE:
-        sslog('TEST_MODE', 'command not run:', cmd, lvl='w')
+        sslog(
+            'TEST_MODE',
+            'command not run:',
+            cmd,
+            lvl='w'
+        )
         return  # cmd
     import subprocess
     returned_output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
@@ -120,11 +128,11 @@ def sslog(msg: str, *args, lvl: str = None, **kwargs):
     if lvl is None:
         print(msg, args, kwargs)
     elif 'e' in lvl: # error
-        print(f"{ERR_ICN} \033[1;41m{msg}\033[1;0m", args, kwargs)  #\U0000274C
+        print(f"{ERR_ICN} \033[1;41m{msg}\033[1;0m", *args, kwargs)  #\U0000274C
     elif 'w' in lvl: # warning
-        print(f"{WARN_ICN} \033[1;31m{msg}\033[1;0m", args, kwargs)  #\U000026A0 
+        print(f"{WARN_ICN} \033[1;31m{msg}\033[1;0m", *args, kwargs)  #\U000026A0 
     elif 'g' in lvl: # green for good
-        print(f"{OK_ICN} \033[1;32m{msg}\033[1;0m", args, kwargs)  #\U00002714
+        print(f"{OK_ICN} \033[1;32m{msg}\033[1;0m", *args, kwargs)  #\U00002714
 
     # print(msg, args, kwargs)
 
@@ -288,6 +296,9 @@ class Lex(object):
         self.is_dead: bool = False  # if a dir fails to create, we can mark it as dead
         self.dead_depth: int = 0  # the depth of the dead dir
 
+        self.current_label: str = None  # the label of the current tree
+        self.empty_line: bool = False  # set true by filename check. if left false the newline checker knows to reset current_label
+
         # self.chmod_mode = None
         # self.chmod_owner = None
         # self.chmod_group = None
@@ -319,8 +330,41 @@ class Lex(object):
     # ignore spaces before comments
     # t_ignore_SPACESCOMMENTFIX = r'[ ]+' + r'\#.*' # note - not working ?
 
+    def t_label(self, t):
+        r"\#\["
+        self.empty_line = False
+
+        content = t.lexer.lexdata[t.lexer.lexpos:]
+        if content.find("\n") != -1:
+            content = content[:content.find("\n")]
+        original_length = len(content)
+        content = '\n'.join(content.split('\\n'))
+        if content[0] == " ":
+            content = content[1:]
+        # split at the first space
+        content = content.split(" ", 1)[0]
+        # if last is a ']' then remove it
+        if content[-1] == "]":
+            content = content[:-1]
+
+        self.current_label = content
+        t.lexer.skip(original_length)
+
+
     def t_newline(self, t):
         r"\n+"
+        # print("THE CURRENT LABEL IS:", self.current_label, t.lexer.lineno)
+
+        if tree.LABEL is not None:
+            # print('get me:', self.current_label, tree.LABEL, (self.current_label != tree.LABEL))
+            if self.current_label != tree.LABEL:
+                tree.TEST_MODE = True
+                tree.QUIET_MODE = True
+            else:
+                tree.TEST_MODE = False #tree._TEST_MODE_BAK
+                tree.QUIET_MODE = False # tree._QUIET_MODE_BAK
+            # TODO - rememeber original settings
+
         t.lexer.lineno += t.value.count("\n")
         self.was_dir = self.is_dir
         self.is_dir = False
@@ -331,6 +375,11 @@ class Lex(object):
         self.is_root = True
         self.delete = False
         self.is_extra = False
+
+        if self.empty_line:
+            self.current_label = None
+
+        self.empty_line = True
 
         # This allows us to have multiple root dirs/files
         # NOTE - not sure if this is best way. But it took a while to get to this point. (or to understand why it has to be this way)
@@ -364,12 +413,40 @@ class Lex(object):
         self.delete = True  # todo: - test it doesn't remove hyphenated words
 
     t_TIMES = r"\*"
-
     t_BACKSLASH = r"\\"
     # def t_BACKSLASH(self, t):
     #     r"\\"
     #     self.lexer.lexpos += 1 # no as this means we don't get the char
     #     return t
+
+
+    def t_APPEND(self, t):  # literally same as write but uses 'ab' to open the file
+        r"\<<"
+
+        content = t.lexer.lexdata[t.lexer.lexpos:]
+        if content.find("\n") != -1:
+            content = content[:content.find("\n")]
+        original_length = len(content)
+        content = '\n'.join(content.split('\\n'))
+        if content[0] == " ":
+            content = content[1:]
+
+        if tree.TEST_MODE:
+            sslog(
+                'TEST_MODE',
+                'skip appending content to this file:',
+                self.last_file_created,
+                lvl='w'
+            )
+        else:
+            self.last_file_created = self.last_file_created.strip()  # ensure remove trailing spaces
+            with open(self.last_file_created, "ab") as f:
+                # f.write(content)
+                f.write(content.encode())
+                sslog(f'    - Appending content to {self.last_file_created}')
+                f.close()
+        t.lexer.skip(original_length)
+
 
     def t_WRITE(self, t):
         r"\<"
@@ -404,6 +481,8 @@ class Lex(object):
 
     def t_sh(self, t):
         r"\$"
+        self.empty_line = False
+
         data = t.lexer.lexdata[t.lexer.lexpos:]
         if data.find("\n") != -1:
             data = data[:data.find("\n")]
@@ -417,7 +496,7 @@ class Lex(object):
         # if windows skip the line
         if os.name == 'nt':
             t.lexer.skip(original_cmd_len)
-            sslog("skipping bash line on windows", 'warn')
+            sslog("skipping bash line on windows", lvl='w')
             return
 
         # run a shell command with subprocess and return the result
@@ -440,6 +519,8 @@ class Lex(object):
 
     def t_cmd(self, t):
         r"\>"
+        self.empty_line = False
+
         data = t.lexer.lexdata[t.lexer.lexpos:]
         if data.find("\n") != -1:
             data = data[:data.find("\n")]
@@ -467,7 +548,7 @@ class Lex(object):
         else:
             self.last_file_created = self.last_file_created.strip()  # ensure remove trailing spaces
             with open(self.last_file_created, "w") as f:
-                sslog('Writing to', self.last_file_created)
+                sslog('    - Writing to', self.last_file_created)
                 f.write(content)
                 f.close()
             # sslog("wrote content into this file:", self.last_file_created)
@@ -483,6 +564,8 @@ class Lex(object):
 
     def t_QUESTION(self, t):
         r"\?"
+        self.empty_line = False
+
         if self.is_extra:
             # gets the question
             question = t.lexer.lexdata[t.lexer.lexpos:]
@@ -494,14 +577,15 @@ class Lex(object):
                 if question[0] == " ":
                     question = question[1:]
             # print(question)
-            sslog("\n")
+            # NOTE - not logs, they are questions so should not be supressed
+            print("\n")
             sslog("Editing: ", self.last_file_created, lvl='g')
-            sslog("************************************************************")
-            sslog("Multi-line editor: Ctrl-D or (Ctrl-Z then Return on windows) to save.")
-            sslog("TIP: Press Return for an empty newline BEFORE saving.")
-            sslog("************************************************************")
-            sslog("\U0001F4DD Enter/Paste your content.")
-            sslog("************************************************************")
+            print("************************************************************")
+            print("Multi-line editor: Ctrl-D or (Ctrl-Z then Return on windows) to save.")
+            print("TIP: Press Return for an empty newline BEFORE saving.")
+            print("************************************************************")
+            print(f"{FILE_ICN} Enter/Paste your content.")
+            print("************************************************************")
 
             # TODO - you can't pass existing file content into the input easily
             # i do have a branch that can break into vim and return.
@@ -518,7 +602,7 @@ class Lex(object):
 
             if tree.TEST_MODE:
                 sslog(
-                    'TEST_MODE:', 
+                    'TEST_MODE', 
                     'Skip writing content into this file:',
                     self.last_file_created,
                     lvl='w')
@@ -533,6 +617,7 @@ class Lex(object):
             t.lexer.skip(original_length)
         else:
             filetype = 'folder' if self.is_dir else 'file'
+            # NOTE - not a log. questions should not be supressed
             print('What would you like the ' + filetype + ' to be called?')
             line = input()
             class mock():
@@ -593,17 +678,14 @@ class Lex(object):
             self.tab_count -= 1
             # print(self.depth, self.tab_count, self.cwd)
 
-
-    # t_NEWLINE  = r'\n'
     t_EQUALS = r"="
     t_LPAREN = r"\("
     t_RPAREN = r"\)"
 
     def t_FILE(self, t):
-        # r"[a-zA-Z_][a-zA-Z_0-9.\-]*" # v1- doesn't allows spaces in filenames
-        # r"[a-zA-Z_][a-zA-Z_0-9.\-]*([\w. ]*)"
-        # r"[a-zA-Z_0-9.][a-zA-Z_0-9.\-]*([\w. ]*)"
         r"[a-zA-Z_0-9.\-][a-zA-Z_0-9.\-]*([\w. ]*)"  # TODO - backslash token to allow starting with +-
+
+        self.empty_line = False
 
         if self.cwd is None:
             self.cwd = os.getcwd()
@@ -656,11 +738,10 @@ class Lex(object):
                     self.cwd = os.getcwd()
                 except FileNotFoundError as e:
                     sslog(
-                        f"""Folder '{folder_name}' not created. read_only.
-
-                    remove the colon from the line if you want to create the folder
-                    """
-                    , lvl='e')
+                        f"Folder '{folder_name}' not created. read_only."
+                        "remove the colon from the line if you want to create the folder",
+                        lvl='e'
+                    )
                     self.is_dead = True
                     self.dead_depth = self.depth
                     self.depth += 1
@@ -676,7 +757,7 @@ class Lex(object):
                     if not os.path.exists(os.path.join(self.cwd, folder_name)):
                         if tree.TEST_MODE:
                             sslog(
-                                "TEST_MODE:",
+                                "TEST_MODE",
                                 f"{FOLDER_ICN} Create folder: {self.cwd}{os.sep}{folder_name}",
                                 lvl='w'
                             )
@@ -788,12 +869,16 @@ class Lex(object):
 
 class tree(object):
 
-    TEST_MODE: bool = False  # wont actually create files
-    QUIET_MODE: bool = False  # TODO suppress all logs
-    VERBOSE_MODE: bool = False  # outputut logs to file
+    _TEST_MODE_BAK: bool = False  #: private. used to hijack the test mode
+    _QUIET_MODE_BAK: bool = False  #: private used to hijack the quiet mode
 
-    # stores read info
-    FILE_INFO = None
+    TEST_MODE: bool = False  #: wont actually create files
+    QUIET_MODE: bool = False  #: suppress all logs
+    VERBOSE_MODE: bool = False  #: outputut logs to file
+
+    LABEL: str = None # 'cat' #: the label of the tree. if set trees without this label will be ignored
+
+    FILE_INFO = None #: stores read info
 
     def __str__(self) -> str:
         return tree.FILE_INFO
@@ -826,7 +911,7 @@ class tree(object):
             output += "\n"
         return output
 
-    def __init__(self, tree_string: str, test: bool = False) -> None:
+    def __init__(self, tree_string: str, test: bool = False, quiet: bool = False):
         """
 
         Args:
@@ -834,8 +919,10 @@ class tree(object):
             test (bool, optional): [if true, will not actually create files or folders]. Defaults to False.
 
         """
-        sslog("tree")
-        tree.TEST_MODE = test
+        tree._QUIET_MODE_BAK = tree.QUIET_MODE = quiet
+
+        sslog(f"{TREE_ICN} tree")
+        tree._TEST_MODE_BAK = tree.TEST_MODE = test
         tree_string = tree_string.replace("\t", "    ")  # force tabs to 4 spaces
         if tree.TEST_MODE:
             sslog("TEST_MODE", "testmode is active. Changes will not be applied.", lvl='w')

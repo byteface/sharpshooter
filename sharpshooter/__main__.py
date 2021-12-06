@@ -22,7 +22,12 @@ def parse_args():
     # parser.add_argument('-h', '--help', action='store_true')
     parser.add_argument("-v", "--version", action="store_true")
     # parser.add_argument('-d', '--debug', action='store_true')
-    # parser.add_argument('-q', '--quiet', action='store_true')
+    parser.add_argument(
+        '-q',
+        '--quiet',
+        help="operate in complete silence",
+        action='store_true'
+    )
     # parser.add_argument('-c', '--config', action='store')
     # parser.add_argument('-i', '--input', action='store_true') # create trees from terminal input
     # parser.add_argument('-r', '--remove', action='store_true') # remove the tree file after creation
@@ -62,6 +67,9 @@ def parse_args():
 
 
 def do_things(arguments):
+
+    _is_quiet = arguments.quiet
+
     if arguments.version is True:
         from sharpshooter import __version__
         print(__version__)
@@ -71,7 +79,7 @@ def do_things(arguments):
         with open(arguments.test.name, "r") as f:
             filecontent = f.read()
             f.close()
-        tree(filecontent, test=True)
+        tree(filecontent, test=True, quiet=_is_quiet)
         return
     if arguments.file is not None:
         # TODO - if no file passed find one called .tree and use it anyway? at least ask for confirmation
@@ -79,7 +87,7 @@ def do_things(arguments):
         with open(arguments.file.name, "r") as f:
             filecontent = f.read()
             f.close()
-        tree(filecontent)
+        tree(filecontent, quiet=_is_quiet)
         return
 
     if arguments.jinja is not None:
@@ -101,7 +109,7 @@ def do_things(arguments):
         template = env.get_template(tmpfile)
         # print(kwargs)
         filecontent = template.render(**kwargs)
-        tree(filecontent)
+        tree(filecontent, quiet=_is_quiet)
         return
     # sharpshooter -j testjinja.tree replaceme=somefolder andme=another count=20
 
