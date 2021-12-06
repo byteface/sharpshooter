@@ -9,7 +9,7 @@
 
 """
 
-__version__ = "0.0.12"
+__version__ = "0.1.0"
 __license__ = "MIT"
 __author__ = "@byteface"
 
@@ -876,9 +876,9 @@ class tree(object):
     QUIET_MODE: bool = False  #: suppress all logs
     VERBOSE_MODE: bool = False  #: outputut logs to file
 
-    LABEL: str = None # 'cat' #: the label of the tree. if set trees without this label will be ignored
+    LABEL: str = None  # 'cat' #: the label of the tree. if set trees without this label will be ignored
 
-    FILE_INFO = None #: stores read info
+    FILE_INFO = None  #: stores read info
 
     def __str__(self) -> str:
         return tree.FILE_INFO
@@ -933,3 +933,29 @@ class tree(object):
             tok = self.lexer.lexer.token()
             if not tok:
                 break
+
+    @staticmethod
+    def mock():
+        """Create a .tree string from the current working directory
+
+        Returns:
+            [str]: [a tree string]
+        """
+        tree_string = ""
+        def walk_dir(dir_path: str, depth: int = 0):
+            nonlocal tree_string
+            for file_name in os.listdir(dir_path):
+                file_path = os.path.join(dir_path, file_name)
+                if os.path.isdir(file_path):
+                    tree_string += "    " * depth
+                    tree_string += "+"+file_name
+                    tree_string += "\n"
+                    walk_dir(file_path, depth + 1)
+                else:
+                    tree_string += "    " * depth
+                    tree_string += file_name
+                    tree_string += "\n"
+
+        walk_dir(os.getcwd())
+        # print(tree_string)
+        return tree_string

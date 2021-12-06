@@ -11,7 +11,7 @@ Anything working will go over to readme.md once added as a feature. consider all
 - maybe also a verbose mode that produces a report in a file.
 
 
-###read only - (more)
+### read only - (more)
 
 - tree should hold the file object for introspection to access files in a directory for example.
 
@@ -19,7 +19,7 @@ Anything working will go over to readme.md once added as a feature. consider all
 
 
 
-##permissions #TODO - this isn't done yet. planning. (may need a 2nd pass for perms)
+### permissions #TODO - this isn't done yet. planning. (may need a 2nd pass for perms)
 
 You can set owners/permissions on the folders as you build them with =. For recursion multiply *
 
@@ -109,19 +109,26 @@ $ mv site.zip backups/site.zip
 
 ```
 
-# labels
 
-some way of labelling trees. so you can have more than 1 in a single .tree file. 
-and pass a lable via cmd to only run those lables.
+## labels
 
-maybe could exist on notation of a comment that gets parsed?
+labels are a way of having multiple trees in a single .tree file.
 
-i.e #[somelabel]
+They use comment for notation i.e #[somelabel]
 
-then you could do
+this allows you to run only the trees with the label. i.e
+
 ```
 sharpshooter -f myproj.tree -l somelabel
 ```
+
+
+
+
+notes. test use mock to build a tree of a cwd. then use labels with ssh 
+
+
+
 
 # variables for cmd line defaults i.e.
 --book="My Great Novel"

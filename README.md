@@ -23,9 +23,10 @@ cd /path/to/some/folder
 sharpshooter -c hello
 # now open and edit the created hello.tree file in any text editor of your choice
 # i.e sudo vim hello.tree
-sharpshooter -t hello.tree  # run this to test
-sharpshooter -f hello.tree  # or this to create the tree
-sharpshooter -j hello.tree  # or this to preprocess with jinja2 before creation
+sharpshooter -t hello.tree  # run -t to test
+sharpshooter -f hello.tree  # or -f to create folders/files specified hello.tree
+sharpshooter -j hello.tree  # or -j to preprocess with jinja2 before creation
+sharpshooter --mock  # creates a sharpshooter.tree file of the current working directory
 ```
 
 ## intro
@@ -309,7 +310,11 @@ To see planned features/goals see TODO.md
 There's several commands you can pass to sharpshooter on the command line.
 
 ```bash
-python3 -m sharpshooter --version  # shows the current version. also uses -v
+python3 -m sharpshooter --help  # shows available commands. also uses -h
+```
+
+```bash
+sharpshooter --version  # shows the current version. also uses -v
 ```
 
 ```bash
@@ -322,6 +327,10 @@ sharpshooter --file myconfig.tree  # parses a .tree file and executes it. also u
 
 ```bash
 sharpshooter --test anotherconfig.tree  # parses a .tree file in test mode. also uses -t
+```
+
+```bash
+sharpshooter --mock  # makes a sharpshooter.tree file based on the current working directory. also uses -m
 ```
 
 Finally there's an experimental feature that requires jinja2:
@@ -402,4 +411,4 @@ This is a work in progress. It creates and destroys files on your hard drive. So
 
 DON'T leave trailing negative space on lines. I use space to change dirs.
 
-comments won't work on lines with bash/windows commands or when writing to file. this is so you can write # symbols to the file
+comments won't work on lines with bash/windows commands or when writing to file. this is so you can write # symbols to the file.
