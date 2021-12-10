@@ -9,7 +9,7 @@
 
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __license__ = "MIT"
 __author__ = "@byteface"
 
@@ -39,7 +39,7 @@ except UnicodeEncodeError:
     OK_ICN = ""
 
 
-def term(cmd: str):
+def term(cmd: str) -> str:
     """run
 
     runs any command on the terminal
@@ -64,7 +64,7 @@ def term(cmd: str):
     try:
         returned_output = returned_output.decode('utf-8')
     except:
-        returned_output = returned_output.decode('cp1252')
+        returned_output = returned_output.decode('cp1252')  # latin-1
     return returned_output
 
 # class FileStream():
@@ -364,7 +364,6 @@ class Lex(object):
 
         t.lexer.skip(original_length)
 
-
     def t_newline(self, t):
         r"\n+"
         if tree.LABEL is not None:
@@ -429,7 +428,6 @@ class Lex(object):
     #     self.lexer.lexpos += 1 # no as this means we don't get the char
     #     return t
 
-
     def t_APPEND(self, t):  # literally same as write but uses 'ab' to open the file
         r"\<<"
 
@@ -456,7 +454,6 @@ class Lex(object):
                 sslog(f'    - Appending content to {self.last_file_created}')
                 f.close()
         t.lexer.skip(original_length)
-
 
     def t_WRITE(self, t):
         r"\<"
@@ -620,7 +617,7 @@ class Lex(object):
 
             if tree.TEST_MODE:
                 sslog(
-                    'TEST_MODE', 
+                    'TEST_MODE',
                     'Skip writing content into this file:',
                     self.last_file_created,
                     lvl='w')
@@ -638,6 +635,7 @@ class Lex(object):
             # NOTE - not a log. questions should not be supressed
             print('What would you like the ' + filetype + ' to be called?')
             line = input()
+
             class mock():
                 value = line
             t = mock()
@@ -709,7 +707,7 @@ class Lex(object):
         # but... i assume that's not all the special chars in the universe?. does \w handle umlauts?
         # aw heck...!. no comments chars as first char. added pound sign. and a space. remove special chars in word end.
         r"[\w.><?@+'`~^%&\*\[\]\{\}.!|\\\"$£';,:;=/\(\),\-][\w.><?@+'`~^%&\*\[\]\{\}.!#|\\\"$£';,:;=/\(\),\-]*([\w.@+'`~^%&\*\[\]\{\}.!#|\\\"£';,:;=/\(\),\- ]*)"
-        # may need to escape any words that first char is token?
+        # may need to escape any words that first char is token? (or use '')?
 
         self.empty_line = False
 
@@ -737,7 +735,7 @@ class Lex(object):
         if not self.was_dir and self.skip:
             sslog(
                 "Syntax Error.",
-                "You can only create things inside a folder. skipping", 
+                "You can only create things inside a folder. skipping",
                 t,
                 lvl='e')
             return
@@ -755,7 +753,7 @@ class Lex(object):
                 get_file_info(self.cwd, folder_name)
 
                 try:
-                    # if not the last line still need to navigate into it if it exists.
+                    # if not last line still navigate into it, if exists
                     # also if not then stop nested ones being created also
                     os.chdir(
                         os.path.join(self.cwd, folder_name)
@@ -952,7 +950,7 @@ class tree(object):
             test (bool, optional): [if true, will not actually create files or folders]. Defaults to False.
 
         """
-        #TODO - put all these vars on the lexer
+        # TODO - put all these as regular vars on the lexer
         tree._QUIET_MODE_BAK = tree.QUIET_MODE = quiet
         tree.LABEL = label
 
@@ -974,7 +972,6 @@ class tree(object):
         # return to the original cwd
         os.chdir(CWD_b4)
 
-
     @staticmethod
     def mock():
         """Create a .tree string from the current working directory
@@ -983,6 +980,7 @@ class tree(object):
             [str]: [a tree string]
         """
         tree_string = ""
+
         def walk_dir(dir_path: str, depth: int = 0):
             nonlocal tree_string
             for file_name in os.listdir(dir_path):

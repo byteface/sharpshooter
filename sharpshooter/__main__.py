@@ -52,14 +52,14 @@ def parse_args():
         "--file",
         help="Create a directory structure from a .tree file.",
         nargs="?",
-        type=argparse.FileType("r")
+        type=str
     )
     parser.add_argument(
         "-t",
         "--test",
         help="test mode won't write to the filesystem.",
         nargs="?",
-        type=argparse.FileType("r")
+        type=str
     )
     parser.add_argument(
         "-c",
@@ -109,9 +109,7 @@ def parse_args():
 
 
 def do_things(arguments, parser):
-
     _is_quiet: bool = arguments.quiet
-
     if arguments.dir is not None:
         # change the cwd to something else
         try:
@@ -128,14 +126,14 @@ def do_things(arguments, parser):
         return __version__
     if arguments.test is not None:
         filecontent = ""
-        with open(arguments.test.name, "r") as f:
+        with open(os.getcwd() + os.sep + arguments.test, "r") as f:
             filecontent = f.read()
             f.close()
         tree(filecontent, test=True, quiet=_is_quiet, label=arguments.label)
         return
     if arguments.file is not None:
         filecontent = ""
-        with open(arguments.file.name, "r") as f:
+        with open(os.getcwd() + os.sep + arguments.file, "r") as f:
             filecontent = f.read()
             f.close()
         tree(filecontent, quiet=_is_quiet, label=arguments.label)

@@ -353,6 +353,8 @@ sharpshooter --mock  # makes a sharpshooter.tree file based on the current worki
 
 ```bash
 sharpshooter --dir  # set the current working directory. use with other commands. also uses -d
+
+#i.e. python -m sharpshooter -d tests -f test.tree
 ```
 
 Finally there's an experimental feature that requires jinja2:
@@ -389,11 +391,12 @@ If you think you can write a sharpshooter parser in another language then please
 To dev on this one locally just pull the repo and do...
 
 ```bash
+cd /sharpshooter
 python3 -m venv venv
 . venv/bin/activate  # lnux, # windows: venv\Scripts\activate 
 pip install -r requirements.txt 
-python3 -m sharpshooter -f test.tree
-# to use venv version without installing
+python -m sharpshooter -d tests -f test.tree  # to use code version without installing
+make test  # to run tests
 ```
 
 Or run and write some tests, there's a few to get started in the Makefile.
@@ -404,7 +407,7 @@ You can install your own version globally using a normal shell with no venv acti
 python3 setup.py install
 ```
 
-There's also a test.tree file in the root you can just tweak and run through the CLI.
+There's several test.tree files in the /tests you can tweak and run through the CLI.
 
 It creates a tmp folder you can delete and rerun to experiment. i.e.
 
