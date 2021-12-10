@@ -8,7 +8,7 @@ import argparse
 import os
 import sys
 
-from sharpshooter import tree
+from sharpshooter import tree, VERSION
 
 HEADER: str = '''# **********************************************************************
 # **********************************************************************
@@ -21,7 +21,7 @@ HEADER: str = '''# *************************************************************
 #                        | |                                       
 #                        |_|                                       
 #
-#   This is a sharpshooter .tree file.
+#   This is a sharpshooter .tree file. (v'''+VERSION+''')
 #
 #   For more info visit:
 #   https://github.com/byteface/sharpshooter/
