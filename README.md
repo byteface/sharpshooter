@@ -384,6 +384,8 @@ import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 ```
 
+For your information, tree is the language and sharpshooter is an implementation. 
+
 ## Contributing
 
 If you think you can write a sharpshooter parser in another language then please do and i'll link to your repo.
@@ -439,3 +441,4 @@ DON'T leave trailing negative space on lines. I use space to change dirs.
 comments won't work on lines with bash/windows commands or when writing to file. this is so you can write # symbols to the file.
 
 filenames with special chars #?><$ at start or end may cause issues until escaping them is sorted.
+
