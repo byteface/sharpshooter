@@ -403,10 +403,10 @@ make test  # to run tests
 
 Or run and write some tests, there's a few to get started in the Makefile.
 
-You can install your own version globally using a normal shell with no venv activated
+You can install your own version using...
 
 ```bash
-python3 setup.py install
+python3 -m pip install -e .
 ```
 
 There's several test.tree files in the /tests you can tweak and run through the CLI.
@@ -441,4 +441,3 @@ DON'T leave trailing negative space on lines. I use space to change dirs.
 comments won't work on lines with bash/windows commands or when writing to file. this is so you can write # symbols to the file.
 
 filenames with special chars #?><$ at start or end may cause issues until escaping them is sorted.
-
