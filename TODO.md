@@ -110,7 +110,7 @@ $ mv site.zip backups/site.zip
 ```
 
 
-## labels
+## labels - changes name to 'branches' . also have them includable.
 
 labels are a way of having multiple trees in a single .tree file.
 
@@ -138,6 +138,18 @@ notes. test use mock to build a tree of a cwd. then use labels with ssh
 
 # detect jinja and warn
 - if using jinja tags it needs to detect and warn if not plug or not running with -j flag
+
+
+# escaping or quoting for special chars
+
+filenames with special chars #?><$ at start or end may cause issues until escaping them is sorted.
+- use 'single quotes' for filenames with special chars?
+
+
+# - outdir
+
+the dir setting on CLI is good. but means the .tree file gets written to that dir.
+may be good to also have an outdir setting.
 
 
 notes...

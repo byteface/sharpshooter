@@ -113,7 +113,6 @@ def term(cmd: str):
 
 def sslog(msg: str, *args, lvl: str = None, **kwargs):
     """logging for sharpshooter"""
-
     if tree.QUIET_MODE:
         return
 
@@ -127,14 +126,12 @@ def sslog(msg: str, *args, lvl: str = None, **kwargs):
 
     if lvl is None:
         print(msg, args, kwargs)
-    elif 'e' in lvl: # error
-        print(f"{ERR_ICN} \033[1;41m{msg}\033[1;0m", *args, kwargs)  #\U0000274C
-    elif 'w' in lvl: # warning
-        print(f"{WARN_ICN} \033[1;31m{msg}\033[1;0m", *args, kwargs)  #\U000026A0 
-    elif 'g' in lvl: # green for good
-        print(f"{OK_ICN} \033[1;32m{msg}\033[1;0m", *args, kwargs)  #\U00002714
-
-    # print(msg, args, kwargs)
+    elif 'e' in lvl:  # error
+        print(f"{ERR_ICN} \033[1;41m{msg}\033[1;0m", *args, kwargs)
+    elif 'w' in lvl:  # warning
+        print(f"{WARN_ICN} \033[1;31m{msg}\033[1;0m", *args, kwargs)
+    elif 'g' in lvl:  # green for good
+        print(f"{OK_ICN} \033[1;32m{msg}\033[1;0m", *args, kwargs)
 
 
 def octal_to_text(octal) -> str:
@@ -296,6 +293,7 @@ class Lex(object):
         self.is_dead: bool = False  # if a dir fails to create, we can mark it as dead
         self.dead_depth: int = 0  # the depth of the dead dir
 
+        self.labels: list = []  # list of tree labels (branches)
         self.current_label: str = None  # the label of the current tree
         self.empty_line: bool = False  # set true by filename check. if left false the newline checker knows to reset current_label
 
@@ -347,23 +345,35 @@ class Lex(object):
         if content[-1] == "]":
             content = content[:-1]
 
-        self.current_label = content
+        # sslog('cl:', self.current_label)
+        if content not in self.labels:
+            # sslog('Adding a label:', self.current_label, lvl='g')
+            self.labels.append(self.current_label)
+            self.current_label = content
+        else:
+            pass
+            # sslog('Creating a branch:', content, lvl='g')
+            # TODO - this is a potential can of worms. (mainly due to catching incorrect use cases)
+            # if branch exists already, then make it
+            # TODO - may need to save cwd and restore?
+            # cwd = os.getcwd()
+            # TODO - these cant be constants for this to work. (will need to pass vars)
+            # note - the lexer itself allows for custom props
+            # tree(self.lexer.lexdata, test=tree.TEST_MODE, quiet=tree.QUIET_MODE, label=tree.LABEL)
+            # os.chdir(cwd)
+
         t.lexer.skip(original_length)
 
 
     def t_newline(self, t):
         r"\n+"
-        # print("THE CURRENT LABEL IS:", self.current_label, t.lexer.lineno)
-
         if tree.LABEL is not None:
-            # print('get me:', self.current_label, tree.LABEL, (self.current_label != tree.LABEL))
             if self.current_label != tree.LABEL:
                 tree.TEST_MODE = True
                 tree.QUIET_MODE = True
             else:
-                tree.TEST_MODE = False #tree._TEST_MODE_BAK
-                tree.QUIET_MODE = False # tree._QUIET_MODE_BAK
-            # TODO - rememeber original settings
+                tree.TEST_MODE = tree._TEST_MODE_BAK
+                tree.QUIET_MODE = tree._QUIET_MODE_BAK
 
         t.lexer.lineno += t.value.count("\n")
         self.was_dir = self.is_dir
@@ -450,6 +460,7 @@ class Lex(object):
 
     def t_WRITE(self, t):
         r"\<"
+        # r"\<\s"
         content = t.lexer.lexdata[t.lexer.lexpos:]
         if content.find("\n") != -1:
             content = content[:content.find("\n")]
@@ -461,6 +472,11 @@ class Lex(object):
         # if first char is space remove it
         if content[0] == " ":
             content = content[1:]
+
+        if self.is_dir:
+            sslog('Syntax Error', 'Cannot write string to a directory on line:', t.lexer.lineno, lvl='e')
+            t.lexer.skip(original_length)
+            return
 
         # TODO - use the filestream class to do various things
 
@@ -481,6 +497,7 @@ class Lex(object):
 
     def t_sh(self, t):
         r"\$"
+        # r"\$\s"  # space after the $ reduce odds of it being a filename
         self.empty_line = False
 
         data = t.lexer.lexdata[t.lexer.lexpos:]
@@ -519,6 +536,7 @@ class Lex(object):
 
     def t_cmd(self, t):
         r"\>"
+        # r"\>\s"
         self.empty_line = False
 
         data = t.lexer.lexdata[t.lexer.lexpos:]
@@ -683,7 +701,15 @@ class Lex(object):
     t_RPAREN = r"\)"
 
     def t_FILE(self, t):
-        r"[a-zA-Z_0-9.\-][a-zA-Z_0-9.\-]*([\w. ]*)"  # TODO - backslash token to allow starting with +-
+        # r"[a-zA-Z_0-9.\-][a-zA-Z_0-9.\-]*([\w. ]*)"  # TODO - backslash token to allow starting with +-
+        # r"[\w.\-][\w.\-]*([\w. ]*)" #? is this just same as above?
+        # pasting all special characters into it 3 times...
+        # r"[\w.><?@+'`~^%&\*\[\]\{\}.!#|\\\"$';,:;=/\(\),\-][\w.><?@+'`~^%&\*\[\]\{\}.!#|\\\"$';,:;=/\(\),\-]*([\w.><?@+'`~^%&\*\[\]\{\}.!#|\\\"$';,:;=/\(\),\-]*)"
+        # seems to pass.
+        # but... i assume that's not all the special chars in the universe?. does \w handle umlauts?
+        # aw heck...!. no comments chars as first char. added pound sign. and a space. remove special chars in word end.
+        r"[\w.><?@+'`~^%&\*\[\]\{\}.!|\\\"$£';,:;=/\(\),\-][\w.><?@+'`~^%&\*\[\]\{\}.!#|\\\"$£';,:;=/\(\),\-]*([\w.@+'`~^%&\*\[\]\{\}.!#|\\\"£';,:;=/\(\),\- ]*)"
+        # may need to escape any words that first char is token?
 
         self.empty_line = False
 
@@ -775,6 +801,11 @@ class Lex(object):
                     self.cwd = os.getcwd()
                 else:
                     Lex._remove_file_or_folder(os.path.join(self.cwd, folder_name))
+                    # test - these vars below were for read only mode. but may work here too.
+                    # issue is a minus dir with children. the children still get created 1 higher.
+                    self.is_dead = True
+                    self.dead_depth = self.depth
+                    self.depth += 1
 
         else:  # incase you forgot. It's not a folder its a file
 
@@ -815,7 +846,7 @@ class Lex(object):
                         Lex._remove_file_or_folder(os.path.join(self.cwd, file_name))
                         return
                     except Exception as e:
-                        sslog("could not delete file", lvl='e')
+                        sslog("Could not delete file", lvl='e')
 
     def t_error(self, t):
         sslog(f"Illegal character {t.value[0]!r}")
@@ -836,7 +867,6 @@ class Lex(object):
 
     @staticmethod
     def _remove_file_or_folder(path: str):
-
         if tree.TEST_MODE:
             sslog(
                 "TEST_MODE",
@@ -847,15 +877,13 @@ class Lex(object):
 
         # detect if its a file or folder
         if os.path.isfile(path):
-            # remove it
+            sslog(f"Removing file: {path}", lvl='g')
             os.remove(path)
-            sslog(f"Removed file: {path}", lvl='g')
         elif os.path.isdir(path):
-            # remove it even if it has contents
+            sslog(f"Removing folder: {path}", lvl='g')
             shutil.rmtree(path)
             # on windows # ?? still not tested?
             # os.system('rmdir /S /Q "{}"'.format(path))
-            sslog(f"Removed folder: {path}", lvl='g')
         else:
             sslog("No file or folder could be found at", path, lvl='w')
             pass
@@ -911,7 +939,12 @@ class tree(object):
             output += "\n"
         return output
 
-    def __init__(self, tree_string: str, test: bool = False, quiet: bool = False):
+    def __init__(
+        self,
+        tree_string: str,
+        test: bool = False,
+        quiet: bool = False,
+        label: str = None):
         """
 
         Args:
@@ -919,20 +952,28 @@ class tree(object):
             test (bool, optional): [if true, will not actually create files or folders]. Defaults to False.
 
         """
+        #TODO - put all these vars on the lexer
         tree._QUIET_MODE_BAK = tree.QUIET_MODE = quiet
+        tree.LABEL = label
+
+        CWD_b4 = os.getcwd()
 
         sslog(f"{TREE_ICN} tree")
         tree._TEST_MODE_BAK = tree.TEST_MODE = test
-        tree_string = tree_string.replace("\t", "    ")  # force tabs to 4 spaces
+        self.tree_string = tree_string.replace("\t", "    ")  # force tabs to 4 spaces
         if tree.TEST_MODE:
             sslog("TEST_MODE", "testmode is active. Changes will not be applied.", lvl='w')
 
         self.lexer = Lex()
-        self.lexer.lexer.input(tree_string)
+        self.lexer.lexer.input(self.tree_string)
         while True:
             tok = self.lexer.lexer.token()
             if not tok:
                 break
+
+        # return to the original cwd
+        os.chdir(CWD_b4)
+
 
     @staticmethod
     def mock():
@@ -955,6 +996,8 @@ class tree(object):
                     tree_string += "    " * depth
                     tree_string += file_name
                     tree_string += "\n"
+
+        # TODO - this will have to escape any words where the first char is a sharpshooter token
 
         walk_dir(os.getcwd())
         # print(tree_string)

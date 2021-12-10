@@ -7,19 +7,36 @@
 """
 
 import os
-import time
 import unittest
 from unittest.mock import Mock
+
+import pathlib as pl
+
 # import requests
 # from mock import patch
 # from inspect import stack
 
 from sharpshooter import tree
 
-# TODO - add asserts for all the functions
-
 
 class TestCase(unittest.TestCase):
+
+    def setUp(self):
+        # change the root to the test directory
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+    def tearDown(self) -> None:
+        # incase left from previous test or failed runs
+        tree("-+dir", test=False)
+        return super().tearDown()
+
+    def assertIsFile(self, path):
+        if not pl.Path(path).resolve().is_file():
+            raise AssertionError(f"File does not exist: {str(path)}")
+
+    def assertIsDir(self, path):
+        if not pl.Path(path).resolve().is_dir():
+            raise AssertionError(f"Directory does not exist: {str(path)}")
 
     def test_tree(self):
 
@@ -45,6 +62,7 @@ class TestCase(unittest.TestCase):
         s1 = """
         +dir
             +plugins
+                file8
                 +:mail
                     file3
                     +things
@@ -59,33 +77,41 @@ class TestCase(unittest.TestCase):
             file1# this is a file
         file2
         """
-
-        import os
-        # change to project root
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         tree(s1, test=False)
 
-        # TODO: test that files now exist
-
-        # check if dir exists
-        self.assertTrue(os.path.isdir(os.path.join(os.getcwd(), 'dir')))
+        path = pl.Path("dir")
+        self.assertIsDir(path)
 
         # make sure plugins is inside dir
-        self.assertFalse(os.path.isdir(os.path.join(os.getcwd(), 'plugins')))
+        path = pl.Path("dir/plugins")
+        self.assertIsDir(path)
 
         # check if files exist
-        # self.assertTrue(os.path.isfile(os.path.join(os.getcwd(), 'dir/plugins', 'mail', 'file3')))
+        expected = ['file4', 'file8']
+        for f in expected:
+            path = pl.Path("dir/plugins/%s" % f)
+            self.assertIsFile(path)
+
+        # clean up
+        tree("-+dir", test=False)
+        tree("-file2", test=False)
 
     def test_minus(self):
         # NOTE - should now handle being tabbed in.
         s1 = """
-        +:dir
+        +dir
             +plugins
                 file4
                 +mail
         """
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         tree(s1, test=True)
+
+        # assert we are in test mode
+        self.assertFalse(os.path.isdir(os.path.join(os.getcwd(), 'dir')))
+
+        tree(s1)
+        assert os.path.isdir(os.path.join(os.getcwd(), 'dir', 'plugins'))
+        assert os.path.isfile(os.path.join(os.getcwd(), 'dir', 'plugins', 'file4'))
 
         # delete a file
         s1 = """
@@ -93,18 +119,18 @@ class TestCase(unittest.TestCase):
             +plugins
                 -file4
         """
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
-        tree(s1, test=True)
+        tree(s1, test=False)
+        # make sure file4 is gone
+        self.assertFalse(os.path.isfile(os.path.join(os.getcwd(), 'dir', 'plugins', 'file4')))
 
         # delete a folder
         s1 = """
         +dir
             +plugins
-                -mail #removing this one
+                -mail  #removing this one
             +addoneaswell   #test comments with space now too
                 test.png
         """
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         tree(s1, test=True)
 
         # test hypthon folder
@@ -113,7 +139,6 @@ class TestCase(unittest.TestCase):
             +plug-ins_19
                 _test-12-3.png
         """
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         tree(s1, test=True)
 
     def test_colon(self):
@@ -121,14 +146,14 @@ class TestCase(unittest.TestCase):
         # -rw-r--r--@ 1 byteface  staff  2100 21 Sep 07:58 README.md
         # To read info about a file or folder without creation use colon :
 
-        test = tree('''
-        :README.md
-        ''')
+        # TODO - cant do for files on same line?
+        test = tree("""
+:test_sharpshooter.py
+""", test=True)
         print(f"{test}")
+        assert 'test_sharpshooter.py' in f"{test}"
 
-        test = tree('''
-        :venv
-        ''')
+        test = tree(":venv")
         print(f"{test}")
 
         # test not creating things by using colon
@@ -168,8 +193,8 @@ class TestCase(unittest.TestCase):
                         +make
                             things.png
         """
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         tree(s1, test=True)
+
 
     def test_testmode_not_delete(self):
         # same code as test mode. things will get created
@@ -193,7 +218,6 @@ class TestCase(unittest.TestCase):
                         +make
                             things.png
         """
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         tree(s1, test=False)
         assert os.path.isdir(os.path.join(os.getcwd(), 'DONT', 'MAKE'))
         assert os.path.isdir(os.path.join(os.getcwd(), 'DONT', 'WE', 'DONT', 'make'))
@@ -204,7 +228,6 @@ class TestCase(unittest.TestCase):
         s2 = """
         -DONT
         """
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         tree(s2, test=False)
         assert os.path.isdir(os.path.join(os.getcwd(), 'DONT')) is False
 
@@ -214,19 +237,18 @@ class TestCase(unittest.TestCase):
         +MAKE THIS FOLDER
             and This file.png
         """
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         tree(s1, test=False)
         assert os.path.isdir(os.path.join(os.getcwd(), 'MAKE THIS FOLDER'))
         assert os.path.isfile(os.path.join(os.getcwd(), 'MAKE THIS FOLDER', 'and This file.png'))
 
     def test_z(self):
         # clean up
+        print('clean up')
         s1 = """
         -dir
         -file2
         -MAKE THIS FOLDER
         """
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         tree(s1, test=False)
 
     # def test_chmod(self):

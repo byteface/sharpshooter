@@ -1,0 +1,55 @@
+#[somebranch1]
++one1
+    +two2
+
+#[somebranch2]
++one3
+    +two4
+
+#[somebranch]
++one
+    +two
+        +three
+            +four
+                +five
+                    +six
+                        +seven
+                            #[somebranch1]
+                            +eight
+                                9.txt
+                                10.txt
+
+
+#[great]
++folder1
+    +folder2
+    file3.txt
+
+
+#[testy]
++folder1222
+    +folder2333
+    file3.txt43434
+
+#[minustest]
+-+somedir
+    +dontmake
+    me.txt
+
+
+
+#[dodgychars]
++my#file
+    +my#+!@£$%^&*()fileb < ok
+    my#+!@£$%^&*()file < ok
+my#file.txt
+
+
+# TODO - this is not done yet
+# adding
+#    inhere
+#        #[somebranch]
+
+
+# i.e. to run this do:
+# python -m sharpshooter -t testchars.tree -l testy

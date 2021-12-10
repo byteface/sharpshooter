@@ -297,6 +297,24 @@ Lastly a prompt would ask for the folder name to be created before putting info.
 ###### WARNING - comments # symbol is ignored after the > so don't use comments on these lines or they could be sent to cmd
 
 
+### \#[name] labels
+
+A label is a way to store multiple trees in a single file.
+
+By using square brackets after a # symbol you can label a tree. i.e.
+
+```
+#[mylabel]
++dir
+    file
+```
+
+You can now pass the label to the tree function.
+
+```bash
+sharpshooter --test myconfig.tree -l mylabel  # use --label to only parse part of a .tree file
+```
+
 ## Anything else?
 
 - you can now have spaces in filenames.
@@ -333,15 +351,19 @@ sharpshooter --test anotherconfig.tree  # parses a .tree file in test mode. also
 sharpshooter --mock  # makes a sharpshooter.tree file based on the current working directory. also uses -m
 ```
 
+```bash
+sharpshooter --dir  # set the current working directory. use with other commands. also uses -d
+```
+
 Finally there's an experimental feature that requires jinja2:
 
 ```bash
 python -m pip install jinja2  # make sure you have jinja2 installed
-sharpshooter --jinja myconfig.tree  # parses a .tree but runs through jinja first. also uses -j
+sharpshooter --jinja myconfig.tree arg1=test # parses a .tree but runs through jinja first. also uses -j
 ```
 
-(note. jinja2 is not part of sharpshooter so you need to install it yourself. its an optional CLI dependency)
-(note. jinja2 has no test mode yet so be careful)
+- (note. jinja2 is not part of sharpshooter so you need to install it yourself. its an optional CLI dependency)
+- (note. jinja2 has no test mode yet so be careful)
 
 
 ## NOTES
@@ -412,3 +434,5 @@ This is a work in progress. It creates and destroys files on your hard drive. So
 DON'T leave trailing negative space on lines. I use space to change dirs.
 
 comments won't work on lines with bash/windows commands or when writing to file. this is so you can write # symbols to the file.
+
+filenames with special chars #?><$ at start or end may cause issues until escaping them is sorted.

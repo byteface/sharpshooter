@@ -84,11 +84,25 @@ def parse_args():
         nargs="?",
         const="sharpshooter"
     )
-    # parser.add_argument('-d', '--debug', action='store_true')
+    parser.add_argument(
+        "-l",
+        "--label",
+        help="Only creates trees with a given label.",
+        type=str,
+        nargs="?",
+        default=None
+    )
+    parser.add_argument(
+        '-d',
+        '--dir',
+        help="Sets the cwd to something else. Put as first argument.",
+        type=str,
+        nargs="?",
+        default=None
+    )
     # parser.add_argument('-c', '--config', action='store')
     # parser.add_argument('-i', '--input', action='store_true') # create trees from terminal input
     # parser.add_argument('-r', '--remove', action='store_true') # remove the tree file after creation
-    # parser.add_argument('-l', '--label', action='store_true') # only run the trees in the file that have a given label
     args = parser.parse_args()
     # print(parser.print_usage())
     return args, parser
@@ -98,6 +112,13 @@ def do_things(arguments, parser):
 
     _is_quiet: bool = arguments.quiet
 
+    if arguments.dir is not None:
+        # change the cwd to something else
+        try:
+            os.chdir(arguments.dir)
+        except FileNotFoundError:
+            print("Directory not found.")
+            sys.exit(1)
     if arguments.help is True:
         print(parser.print_help())
         sys.exit()
@@ -110,14 +131,14 @@ def do_things(arguments, parser):
         with open(arguments.test.name, "r") as f:
             filecontent = f.read()
             f.close()
-        tree(filecontent, test=True, quiet=_is_quiet)
+        tree(filecontent, test=True, quiet=_is_quiet, label=arguments.label)
         return
     if arguments.file is not None:
         filecontent = ""
         with open(arguments.file.name, "r") as f:
             filecontent = f.read()
             f.close()
-        tree(filecontent, quiet=_is_quiet)
+        tree(filecontent, quiet=_is_quiet, label=arguments.label)
         return
     if arguments.jinja is not None:
         # i.e. sharpshooter -j testjinja.tree replaceme=somefolder andme=another count=20
@@ -139,7 +160,7 @@ def do_things(arguments, parser):
         template = env.get_template(tmpfile)
         # print(kwargs)
         filecontent = template.render(**kwargs)
-        tree(filecontent, quiet=_is_quiet)
+        tree(filecontent, quiet=_is_quiet, label=arguments.label)
         return
     if arguments.create is not None:
         name = "helloworld"
