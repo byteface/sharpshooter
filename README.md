@@ -1,4 +1,4 @@
-# tree (sharpshooter)
+# 🌳 tree (sharpshooter)
 
 [![PyPI version](https://badge.fury.io/py/sharpshooter.svg)](https://badge.fury.io/py/sharpshooter.svg) 
 [![Downloads](https://pepy.tech/badge/sharpshooter)](https://pepy.tech/project/sharpshooter)
@@ -8,6 +8,10 @@
 Shorthand templates for creating (or destroying) file-systems.
 
 tree could be written for any language.
+
+
+<p align="center"><img src="/ttyrec.gif?raw=true"/></p>
+
 
 ## install
 
