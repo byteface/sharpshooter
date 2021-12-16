@@ -9,7 +9,7 @@ Shorthand templates for creating (or destroying) file-systems.
 
 tree could be written for any language.
 
-<p align="center"><img src="/tty.gif?raw=true"/></p>
+<p align="center"><img src="https://github.com/byteface/sharpshooter/raw/master/tty.gif?raw=true"/></p>
 
 ## install
 
