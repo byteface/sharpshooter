@@ -1,11 +1,11 @@
-+{{replaceme}}
+/{{replaceme}}
     {% for n in range(20) %}
     image{{n}}.png
     {% endfor %}
 
-+{{andme}}
-    +{{metoo}}
-        +{{methree}}
+/{{andme}}
+    /{{metoo}}
+        /{{methree}}
 
 
 # i.e. to run this do:

@@ -9,9 +9,7 @@ Shorthand templates for creating (or destroying) file-systems.
 
 tree could be written for any language.
 
-
-<p align="center"><img src="/ttyrec.gif?raw=true"/></p>
-
+<!-- <p align="center"><img src="/ttyrec.gif?raw=true"/></p> -->
 
 ## install
 
@@ -29,7 +27,6 @@ sharpshooter -c hello
 # i.e sudo vim hello.tree
 sharpshooter -t hello.tree  # run -t to test
 sharpshooter -f hello.tree  # or -f to create folders/files specified hello.tree
-sharpshooter -j hello.tree  # or -j to preprocess with jinja2 before creation
 sharpshooter --mock  # creates a sharpshooter.tree file of the current working directory
 ```
 
@@ -41,44 +38,44 @@ To create a plain empty file just type a word i.e.
 file
 ```
 
-to create or access a dir use +
+to create or access a dir use a slash /
 
 ```
-+dir
+/dir
 ```
 
 To create a file inside a dir use a 4 spaces (or tab)
 
 ```
-+dir
+/dir
     file
 ```
 
 putting it all together…
 
 ```
-+dir
+/dir
     file
-    +plugins
-    +mail
-        +vendor
+    /plugins
+    /mail
+        /vendor
         index.html
-            +something # this one will fail
+            /something # this one will fail
         file.py
         file.py
 ```
 
-### + (plus) Creating a tree
+### / (slash) Creating a tree
 
 ```python
 from sharpshooter import tree
 
 tree('''
-+dir
+/dir
     file
-    +plugins
-        +mail
-            +vendor
+    /plugins
+        /mail
+            /vendor
             index.html
             file.py
         file2.py
@@ -93,8 +90,8 @@ tree can also remove dirs and files. You guessed it. With the the - minus symbol
 
 ```python
 tree = '''
-+dir
-    +plugins
+/dir
+    /plugins
          -mail
 '''
 ```
@@ -107,9 +104,9 @@ To read info about a file or folder without creation use colon ':' to indicate r
 
 ```python
 tree = '''
-+:dir
-    +:plugins
-         -mail
+:/dir
+    :/plugins
+        -mail
 '''
 ```
 
@@ -123,10 +120,10 @@ Use # to comment out a line or instruction.
 
 ```python
 s = '''
-+:dir
+/:dir
     file# some ignored text here
-    +plugins
-        +mail
+    /plugins
+        /mail
 '''
 ```
 
@@ -162,8 +159,8 @@ you can safely change change order of colon and plus i.e. will still work.
 
 ```python
 tree('''
-:+dont
-    :+make
+:/dont
+    :/make
         :this
 ''')
 ```
@@ -172,8 +169,8 @@ but i prefer to use the colon right before the file or folder name .i.e.
 
 ```python
 tree('''
-+:dont
-    +:make
+/:dont
+    /:make
         :this
 ''')
 ```
@@ -190,8 +187,8 @@ You just have to past test=True to the tree function. i.e
 
 ```python
 mytree = '''
-+somedir
-    +anotherdir
+/somedir
+    /anotherdir
         someotherfile.png
     file.txt
     file2.gif
@@ -209,9 +206,9 @@ users home path is supported.
 
 ```python
 s1 = """
-:+~
+:/~
     test.png
-    +somedir
+    /somedir
         somescript.py
 """
 tree(s1, test=True)
@@ -224,7 +221,7 @@ tree(s1, test=False)
 
 ```python
 mystring = """
-+somedir
+/somedir
     somescript.py < print('hello world!')
     some.txt < hello world!
     script.sh < echo 'hello world'
@@ -236,7 +233,7 @@ you can use \n to add more than one line to a file.
 
 ```python
 mystring = """
-+somedir
+/somedir
     somepage.md < # heading \n## another heading \n### and another heading
 """
 tree(mystring)
@@ -250,7 +247,7 @@ Anything after the $ symbol is passed to the shell and the result is written to 
 
 ```python
 mystring = """
-+somedir
+/somedir
     test.txt $ cowsay moo
 """
 tree(mystring)
@@ -266,7 +263,7 @@ Anything after the > symbol is passed to cmd with the result written to the file
 
 ```python
 mystring = """
-+somedir
+/somedir
     test.txt $ ls -al
     test.txt > dir
 """
@@ -282,11 +279,11 @@ A question will take user input. It can be used in place of a filename.
 
 ```python
 mystring = """
-+somedir
+/somedir
     somefile.txt
     ?
     anotherfile.txt ?
-    +?
+    /?
         info.txt
 """
 tree(mystring)
@@ -309,7 +306,7 @@ By using square brackets after a # symbol you can label a tree. i.e.
 
 ```
 #[mylabel]
-+dir
+/dir
     file
 ```
 
@@ -418,18 +415,18 @@ There's several test.tree files in the /tests you can tweak and run through the 
 It creates a tmp folder you can delete and rerun to experiment. i.e.
 
 ```
-+tmp
-    +hello
+/tmp
+    /hello
         world.txt < y tho!
         page.html < <html>y tho!</html>
-    +this # some comment
-        +is
+    /this # some comment
+        /is
             cool.txt $ cowsay cool
             cool.txt > dir
             test.md < # heading \n## another heading \n### and another heading
     page.html $ curl -s https://www.google.com
     page2.htm $ curl -s https://www.fileformat.info/info/charset/UTF-32/list.htm
-    +partial
+    /partial
         star.html $ curl -s -r 32-35 https://raw.githubusercontent.com/byteface/domonic/master/docs/_templates/sidebarintro.html
     files.txt $ find .
 ```

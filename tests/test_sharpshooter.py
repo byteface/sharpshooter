@@ -27,7 +27,7 @@ class TestCase(unittest.TestCase):
 
     def tearDown(self) -> None:
         # incase left from previous test or failed runs
-        tree("-+dir", test=False)
+        tree("-/dir", test=False)
         return super().tearDown()
 
     def assertIsFile(self, path):
@@ -41,16 +41,16 @@ class TestCase(unittest.TestCase):
     def test_tree(self):
 
 #         s1 = """
-# +:dir
-#     +plugins
-#         +mail
+# /:dir
+#     /plugins
+#         /mail
 #             file3
-#             +things
-#                 +again
+#             /things
+#                 /again
 #                     file8
 #                     file9.txt
 #                 file7
-#             +more
+#             /more
 #                 file6
 #         file4
 #             file5# comments are not allowed spaces before them yet. causes wrong directory
@@ -60,17 +60,17 @@ class TestCase(unittest.TestCase):
 
 # NOTE - should now handle being tabbed in.
         s1 = """
-        +dir
-            +plugins
+        /dir
+            /plugins
                 file8
-                +:mail
+                /:mail
                     file3
-                    +things
-                        +again
+                    /things
+                        /again
                             :file8
                             file9.txt
                         file7
-                    +:more
+                    /:more
                         file6
                 file4
                     file5# comments are not allowed spaces before them yet. causes wrong directory
@@ -93,16 +93,16 @@ class TestCase(unittest.TestCase):
             self.assertIsFile(path)
 
         # clean up
-        tree("-+dir", test=False)
+        tree("-/dir", test=False)
         tree("-file2", test=False)
 
     def test_minus(self):
         # NOTE - should now handle being tabbed in.
         s1 = """
-        +dir
-            +plugins
+        /dir
+            /plugins
                 file4
-                +mail
+                /mail
         """
         tree(s1, test=True)
 
@@ -115,8 +115,8 @@ class TestCase(unittest.TestCase):
 
         # delete a file
         s1 = """
-        +dir
-            +plugins
+        /dir
+            /plugins
                 -file4
         """
         tree(s1, test=False)
@@ -125,18 +125,18 @@ class TestCase(unittest.TestCase):
 
         # delete a folder
         s1 = """
-        +dir
-            +plugins
+        /dir
+            /plugins
                 -mail  #removing this one
-            +addoneaswell   #test comments with space now too
+            /addoneaswell   #test comments with space now too
                 test.png
         """
         tree(s1, test=True)
 
         # test hypthon folder
         s1 = """
-        +newdir123
-            +plug-ins_19
+        /newdir123
+            /plug-ins_19
                 _test-12-3.png
         """
         tree(s1, test=True)
@@ -158,39 +158,39 @@ class TestCase(unittest.TestCase):
 
         # test not creating things by using colon
         tree('''
-        +:dont
-            +:make
+        /:dont
+            /:make
                 :this
         ''')
         # self.assertFalse(os.path.isdir(os.path.join(os.getcwd(), 'venv', 'test')))
 
         # change order of colon and plus
         tree('''
-        :+dont
-            :+make
+        :/dont
+            :/make
                 :this
         ''')
 
     def test_testmode(self):
         # test mode true. things wont get created
         s1 = """
-        +DONT
-            +MAKE
+        /DONT
+            /MAKE
                 me.png
-                +or
-                    +this
-                        +or
+                /or
+                    /this
+                        /or
                             this.png
                             that.gif
-            +WE
-                +DONT
-                    +make
+            /WE
+                /DONT
+                    /make
                         things.png
-                        +this
-            +test
-                +mode
-                    +wont
-                        +make
+                        /this
+            /test
+                /mode
+                    /wont
+                        /make
                             things.png
         """
         tree(s1, test=True)
@@ -199,23 +199,23 @@ class TestCase(unittest.TestCase):
     def test_testmode_not_delete(self):
         # same code as test mode. things will get created
         s1 = """
-        +DONT
-            +MAKE
+        /DONT
+            /MAKE
                 me.png
-                +or
-                    +this
-                        +or
+                /or
+                    /this
+                        /or
                             this.png
                             that.gif
-            +WE
-                +DONT
-                    +make
+            /WE
+                /DONT
+                    /make
                         things.png
-                        +this
-            +test
-                +mode
-                    +wont
-                        +make
+                        /this
+            /test
+                /mode
+                    /wont
+                        /make
                             things.png
         """
         tree(s1, test=False)
@@ -234,7 +234,7 @@ class TestCase(unittest.TestCase):
     def test_folders_with_spaces(self):
         # As much as I hate this. It's pefectly legal.
         s1 = """
-        +MAKE THIS FOLDER
+        /MAKE THIS FOLDER
             and This file.png
         """
         tree(s1, test=False)
@@ -253,7 +253,7 @@ class TestCase(unittest.TestCase):
 
     # def test_chmod(self):
     #     s1 = """
-    #     +MAKE THIS FOLDER
+    #     /MAKE THIS FOLDER
     #         and This file.png =644 # this will be tough/impossible? to parse. i.e that could literally be the full filename
     #     """
     #     os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -261,9 +261,9 @@ class TestCase(unittest.TestCase):
 
     # def test_tilde(self):
     #     s1 = """
-    #     :+~
+    #     :/~
     #         test.png
-    #         +somedir
+    #         /somedir
     #             somescript.py
     #     """
     #     tree(s1, test=True)
@@ -271,7 +271,7 @@ class TestCase(unittest.TestCase):
 
     # def test_paths(self):
     #     s1 = """
-    #     :+/var/www/html/
+    #     :/var/www/html/
     #         test.png
     #         somedir/somescript.py
     #     """

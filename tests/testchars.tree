@@ -1,47 +1,47 @@
 #[somebranch1]
-+one1
-    +two2
+/one1
+    /two2
 
 #[somebranch2]
-+one3
-    +two4
+/one3
+    /two4
 
 #[somebranch]
-+one
-    +two
-        +three
-            +four
-                +five
-                    +six
-                        +seven
+/one
+    /two
+        /three
+            /four
+                /five
+                    /six
+                        /seven
                             #[somebranch1]
-                            +eight
+                            /eight
                                 9.txt
                                 10.txt
 
 
 #[great]
-+folder1
-    +folder2
+/folder1
+    /folder2
     file3.txt
 
 
 #[testy]
-+folder1222
-    +folder2333
+/folder1222
+    /folder2333
     file3.txt43434
 
 #[minustest]
--+somedir
-    +dontmake
+-/somedir
+    /dontmake
     me.txt
 
 
 
 #[dodgychars]
-+my#file
-    +my#+!@£$%^&*()fileb < ok
-    my#+!@£$%^&*()file < ok
+/my#file
+    /my#/!@£$%^&*()fileb < ok
+    my#/!@£$%^&*()file < ok
 my#file.txt
 
 

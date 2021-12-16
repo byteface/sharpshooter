@@ -1,27 +1,27 @@
-+tmp
-    +hello
+/tmp
+    /hello
         world.txt < y tho!
         page.html < <html>y tho!</html>
-    +this # some comment
-        +is
+    /this # some comment
+        /is
             cool.txt $ cowsay cool
             cool.txt > dir
             test.md < # heading \n## another heading \n### and another heading
     page.html $ curl -s https://www.google.com
     page2.htm $ curl -s https://www.fileformat.info/info/charset/UTF-32/list.htm
-    +partial
+    /partial
         star.html $ curl -s -r 32-35 https://raw.githubusercontent.com/byteface/domonic/master/docs/_templates/sidebarintro.html
     files.txt $ find .
 
-+tmp2
-    +delete
+/tmp2
+    /delete
         me.txt
 
-+proj
-    +archive
-    +docs
-    +src
-    +tests
+/proj
+    /archive
+    /docs
+    /src
+    /tests
     .gitignore
     .travis.yml
     LICENSE
@@ -29,26 +29,26 @@
     requirements.txt
     setup.py
     tox.ini
-    +templates
+    /templates
         404.html
 
-+newtest
+/newtest
     #myfile.py ? maybe have a question?
     myfile.py < #HOSTNAME \n#PASSWORD \n#USER
     myfile2.py ?
     doanotherthing.txt
     doanotherthing2.txt < and this
-    +folder
+    /folder
         with.png
     # input a filename
     ? < test adding content to a new file
     test.png
     # input a folder name
-    +?
+    /?
     # input filename and content
     ? ?
     # input a folder name and put a png into the newly created folder
-    +?
+    /?
         file.png
 
 

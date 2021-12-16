@@ -169,8 +169,9 @@ def do_things(arguments, parser):
             f.write(
                 f"""{HEADER}
 
-+hello
+/hello
     world.txt
+
 """
             )
 

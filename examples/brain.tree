@@ -24,816 +24,816 @@
 
 # create brain
 #[brain]
-+brain
+/brain
     sleep.sh
-    +memory
+    /memory
         README.md
-    +short_term_memory
+    /short_term_memory
         README.md
-    +working_memory
+    /working_memory
         README.md
-    +behaviours
+    /behaviours
         README.md
         workingMem.txt
-    +BDI # beliefs, desire, intention
+    /BDI # beliefs, desire, intention
         README.md
-        +goals
+        /goals
             __init__.py
-        +needs
-            +psychological
+        /needs
+            /psychological
                 __init__.py
-            +physiological
+            /physiological
                 __init__.py
-        +intentions
+        /intentions
             __init__.py
-        +beliefs
+        /beliefs
             __init__.py
-            +false_belief
+            /false_belief
                 __init__.py
-        +desires
+        /desires
             __init__.py
-        +motivations
+        /motivations
             __init__.py
 
 
 # add integrated memory
 #[comprehension]
-+brain
-    +comprehension
-        +adjectives
+/brain
+    /comprehension
+        /adjectives
             README.txt
-            +light
+            /light
                 .gitignore
-            +dark
+            /dark
                 .gitignore
-        +possesive_pronoun
+        /possesive_pronoun
             .gitignore
-        +TEMPORAL
+        /TEMPORAL
             README.md
-        +METAPHOR
+        /METAPHOR
             README.md
-        +RANKING
+        /RANKING
             README.md
-        +DATES
-            +EVENTS
+        /DATES
+            /EVENTS
                 README.md
-                +XMAS
+                /XMAS
                     .gitignore
-        +LETTERS
-            +a
+        /LETTERS
+            /a
                 .gitignore
-        +numbers
+        /numbers
             README.md
-            +1
+            /1
                 .gitignore
-        +PLACES
+        /PLACES
             .gitignore
-        +SHAPES
+        /SHAPES
             .gitignore
-        +SOUNDS
-            +communication_sounds
-                +alphabet
-                    +A
+        /SOUNDS
+            /communication_sounds
+                /alphabet
+                    /A
                         .gitignore
-            +onomatopoeia
+            /onomatopoeia
                 .gitignore
-        +personal_pronoun
-            +you
+        /personal_pronoun
+            /you
                 .gitignore
-            +pypal
+            /pypal
                 .gitignore
-        +connectives
+        /connectives
             .gitignore
-        +EXISTENTIAL
+        /EXISTENTIAL
             README.md
-        +nouns_proper
+        /nouns_proper
             README.md
-        +COLORS
+        /COLORS
             README.md
-            +green
+            /green
                 .gitignore
-            +blue
+            /blue
                 .gitignore
-            +red
+            /red
                 .gitignore
-            +alpha
+            /alpha
                 .gitignore
-        +SELF
+        /SELF
             .gitignore
-        +nouns
-            +word
+        /nouns
+            /word
                 .gitignore
-        +PEOPLE
-            +mike
+        /PEOPLE
+            /mike
                 .gitignore
-        +animal
+        /animal
             .gitignore
-        +SPACIAL
+        /SPACIAL
             .gitignore
-        +pronoun
+        /pronoun
             .gitignore
-        +verbs
+        /verbs
             README.md
-        +foreign_chars
+        /foreign_chars
             .gitignore
-        +abbreviation
+        /abbreviation
             .gitignore
-        +adverb
+        /adverb
             .gitignore
-        +modal
+        /modal
             .gitignore
-        +TO
+        /TO
             .gitignore
-        +determiner
+        /determiner
             .gitignore
-        +preposition
+        /preposition
             .gitignore
-        +topics
-            +misc
+        /topics
+            /misc
                 .gitignore
-            +music
+            /music
                 .gitignore
-            +home
+            /home
                 .gitignore
-            +shopping
+            /shopping
                 .gitignore
-            +literature
+            /literature
                 .gitignore
-            +cinema
+            /cinema
                 .gitignore
-            +toys
+            /toys
                 .gitignore
-            +technology
+            /technology
                 .gitignore
-            +explicit
+            /explicit
                 .gitignore
-            +pets
+            /pets
                 .gitignore
-            +art
+            /art
                 .gitignore
-            +clothing
+            /clothing
                 .gitignore
-            +sex
+            /sex
                 .gitignore
-            +health
+            /health
                 .gitignore
-            +Law
+            /Law
                 .gitignore
-            +photography
+            /photography
                 .gitignore
-            +funny
+            /funny
                 .gitignore
-            +education
+            /education
                 .gitignore
-            +entertainment
+            /entertainment
                 .gitignore
-            +business
+            /business
                 .gitignore
-            +Science
+            /Science
                 .gitignore
-            +mathematics
+            /mathematics
                 .gitignore
-            +Sport
+            /Sport
                 .gitignore
-            +fashion
+            /fashion
                 .gitignore
-            +nature
+            /nature
                 .gitignore
-            +politics
+            /politics
                 .gitignore
-            +social
+            /social
                 .gitignore
-            +outdoors
+            /outdoors
                 .gitignore
-            +Religion
+            /Religion
                 .gitignore
-            +Religion
+            /Religion
                 .gitignore
-                +astrology
+                /astrology
                     .gitignore
-            +News
+            /News
                 .gitignore
-            +philosophy
+            /philosophy
                 .gitignore
-            +animals
+            /animals
                 .gitignore
-            +war
+            /war
                 .gitignore
-            +food
+            /food
                 .gitignore
-            +History
+            /History
                 .gitignore
-            +cars
+            /cars
                 .gitignore
-            +environment
+            /environment
                 .gitignore
-            +regional
+            /regional
                 .gitignore
-            +baby
+            /baby
                 .gitignore
-            +random
+            /random
                 .gitignore
-            +collectables
+            /collectables
                 .gitignore
-            +events
+            /events
                 .gitignore
-            +space
+            /space
                 .gitignore
-                +astronomy
+                /astronomy
                     .gitignore
-            +none
+            /none
                 .gitignore
-            +sound
+            /sound
                 .gitignore
-            +kids
+            /kids
                 .gitignore
-            +travel
+            /travel
                 .gitignore
-            +geography
+            /geography
                 .gitignore
-            +international
+            /international
                 .gitignore
-            +culture
+            /culture
                 .gitignore
-        +questions
-            +can
+        /questions
+            /can
                 .gitignore
-            +how
+            /how
                 .gitignore
-            +have
+            /have
                 .gitignore
-            +who
+            /who
                 .gitignore
-            +what
+            /what
                 .gitignore
-                +is
+                /is
                     .gitignore
-            +are
+            /are
                 .gitignore
-            +where
+            /where
                 .gitignore
-            +when
+            /when
                 .gitignore
-            +why
+            /why
                 .gitignore
 
-#:+brain
-+brain
-    +instincts
-        +move
+#:/brain
+/brain
+    /instincts
+        /move
             README.md
-            +around
+            /around
                 __init__.py
-            +over
+            /over
                 __init__.py
-            +up
+            /up
                 __init__.py
-            +down
+            /down
                 __init__.py
-        +seek
+        /seek
             README.md
-            +safety
-                +compete
+            /safety
+                /compete
                     __init__.py
-            +pleasure
-                +compete
+            /pleasure
+                /compete
                     __init__.py
-        +imitate
+        /imitate
             README.md
             __init__.py
-        +learn
+        /learn
             README.md
             __init__.py
-        +think
+        /think
             README.md
             __init__.py
-        +avoid
+        /avoid
             README.md
-            +death
+            /death
                 __init__.py
-            +signal
+            /signal
                 __init__.py
-            +pain
+            /pain
                 __init__.py
-        +memory
+        /memory
             README.md
             __init__.py
-            +recognise
+            /recognise
                 __init__.py
-                +semantic
+                /semantic
                     __init__.py
-                +forget
+                /forget
                     __init__.py
-                +remember
+                /remember
                     __init__.py
-                    +recollect
+                    /recollect
                         __init__.py
-        +adapt
+        /adapt
             README.md
             __init__.py
-        +iterate
+        /iterate
             README.md
             __init__.py
-            +feedback_loop
+            /feedback_loop
                 __init__.py
-        +test
+        /test
             README.md
             __init__.py
-        +intelligence
+        /intelligence
             README.md
-            +musical
+            /musical
                 README.md
-            +intrapersonal
-                +self_control
+            /intrapersonal
+                /self_control
                     __init__.py
-                    +values
+                    /values
                         __init__.py
-                +disposition
+                /disposition
                     __init__.py
-                +self_awareness
+                /self_awareness
                     __init__.py
-                +false_belief
+                /false_belief
                     __init__.py
-                +guilt
+                /guilt
                     __init__.py
-                +inclination
+                /inclination
                     __init__.py
-                +sensory
+                /sensory
                     __init__.py
-                +circadian
+                /circadian
                     __init__.py
-            +learned
+            /learned
                 __init__.py
-            +inherent
+            /inherent
                 __init__.py
-                +evolutionary
+                /evolutionary
                     __init__.py
-            +parallel
+            /parallel
                 __init__.py
-            +interpersonal
-                +conformity
+            /interpersonal
+                /conformity
                     __init__.py
-                +forgiveness
+                /forgiveness
                     __init__.py
-                +honesty
+                /honesty
                     __init__.py
-                +love
+                /love
                     __init__.py
-                +network
-                    +communication
-                        +paralinguistic
-                            +gesticulation
+                /network
+                    /communication
+                        /paralinguistic
+                            /gesticulation
                                 __init__.py
-                            +facial expression
+                            /facial expression
                                 __init__.py
-                            +audio
+                            /audio
                                 __init__.py
-                                +shouting
+                                /shouting
                                     __init__.py
-                                +whispering
+                                /whispering
                                     __init__.py
-                        +speech
-                            +consonants
+                        /speech
+                            /consonants
                                 __init__.py
-                            +vowels
+                            /vowels
                                 __init__.py
-                        +rules
+                        /rules
                             __init__.py
-                            +turn taking
+                            /turn taking
                                 __init__.py
-                            +adjacency pairs
+                            /adjacency pairs
                                 __init__.py
-                +loyalty
+                /loyalty
                     __init__.py
-                +empathy
+                /empathy
                     README.md
-                    +cognitive
+                    /cognitive
                         __init__.py
-                    +experiential
+                    /experiential
                         __init__.py
-                    +schadenfreude
+                    /schadenfreude
                         __init__.py
-                    +neurological
+                    /neurological
                         __init__.py
-                    +physiological
+                    /physiological
                         __init__.py
-                +phsycic
+                /phsycic
                     __init__.py
-                +lying
+                /lying
                     __init__.py
-                +revenge
+                /revenge
                     __init__.py
-                +jealousy
+                /jealousy
                     __init__.py
-            +creativity
-                +art
+            /creativity
+                /art
                 __init__.py
-            +contextual
+            /contextual
                 __init__.py
-            +logic
-                +gates
-                    +NOT
+            /logic
+                /gates
+                    /NOT
                         __init__.py
-                    +EXOR
+                    /EXOR
                         __init__.py
-                    +NOR
+                    /NOR
                         __init__.py
-                    +EXNOR
+                    /EXNOR
                         __init__.py
-                    +AND
+                    /AND
                         __init__.py
-                    +NAND
+                    /NAND
                         __init__.py
-                    +OR
+                    /OR
                         __init__.py
-                +methodology
+                /methodology
                     __init__.py
-                +math
-                    +heuristics
+                /math
+                    /heuristics
                         __init__.py
-                    +probability
+                    /probability
                         __init__.py
-                    +symmetry
-                        +glide
+                    /symmetry
+                        /glide
                             __init__.py
-                    +translation
+                    /translation
                         __init__.py
-                    +horizontal
+                    /horizontal
                         __init__.py
-                    +rotoreflection
+                    /rotoreflection
                         __init__.py
-                    +displacement
+                    /displacement
                         __init__.py
-                    +spherical
+                    /spherical
                         __init__.py
-                    +screw
+                    /screw
                         __init__.py
-                    +rotation
+                    /rotation
                         __init__.py
-                    +vertical
+                    /vertical
                         __init__.py
-                    +reflection
+                    /reflection
                         __init__.py
-                    +biases
-                        +learned
+                    /biases
+                        /learned
                             __init__.py
-                        +natural
-                            +inherent
+                        /natural
+                            /inherent
                                 README.md
                                 __init__.py
-                            +evolved
+                            /evolved
                                 __init__.py
-                        +accidental
+                        /accidental
                             __init__.py
-                        +discovered
+                        /discovered
                             __init__.py
-                        +chosen
+                        /chosen
                             __init__.py
-                    +functions
-                        +MINUS
-                            +less
+                    /functions
+                        /MINUS
+                            /less
                                 __init__.py
-                        +ADD
-                            +more
+                        /ADD
+                            /more
                                 __init__.py
-                        +BOOLEAN
-                            +TRUE
+                        /BOOLEAN
+                            /TRUE
                                 __init__.py
-                            +FALSE
+                            /FALSE
                                 __init__.py
-                    +geometry
+                    /geometry
                         __init__.py
-                    +random
+                    /random
                         __init__.py
-                    +infinity
+                    /infinity
                         __init__.py
-            +naturalistic
+            /naturalistic
                 __init__.py
-            +meaning
+            /meaning
                 README.md
-            +kinesthetic
+            /kinesthetic
                 __init__.py
-            +cheat
-                +lie
+            /cheat
+                /lie
                     __init__.py
-            +mnemonic
+            /mnemonic
                 __init__.py
-            +intuition
+            /intuition
                 __init__.py
-            +difference
+            /difference
                 README.md
                 __init__.py
-            +philosophy
-                +existentialism
+            /philosophy
+                /existentialism
                     __init__.py
-                +religion
+                /religion
                     __init__.py
-            +visual
-                +spatial
+            /visual
+                /spatial
                     __init__.py
-            +causation
-                +gravity
+            /causation
+                /gravity
                     __init__.py
-                +displacement
+                /displacement
                     README.md
-            +symbolism
-                +README.md
-                +verbal
+            /symbolism
+                /README.md
+                /verbal
                     __init__.py
-                +linguistic
+                /linguistic
                     __init__.py
-            +practice
-                +skill
+            /practice
+                /skill
                     __init__.py
-                +religion
+                /religion
                     __init__.py
-                +tolerance
+                /tolerance
                     README.md
                     __init__.py
-        +reflexes
+        /reflexes
             __init__.py
-        +protect
+        /protect
             __init__.py
-        +sex
+        /sex
             __init__.py
-        +follow
-            +parent
-                +until
-                    +competent
+        /follow
+            /parent
+                /until
+                    /competent
                         __init__.py
-        +show
-            +others
+        /show
+            /others
                 __init__.py
-        +volition
+        /volition
             __init__.py
-        +listen
+        /listen
             __init__.py
-        +understanding
+        /understanding
             README.md
-            +heuristics
+            /heuristics
                 __init__.py
-        +sensibility
-            +rationalise
+        /sensibility
+            /rationalise
                 __init__.py
-        +ontology
+        /ontology
             README.md
-            +mentalese
+            /mentalese
                 __init__.py
-        +explore
-            +discover
+        /explore
+            /discover
                 __init__.py
-            +saccade
+            /saccade
                 __init__.py
-        +time
-            +tense
-                +present
+        /time
+            /tense
+                /present
                     __init__.py
-                +past
+                /past
                     __init__.py
-                +future
+                /future
                     __init__.py
-            +awareness
+            /awareness
                 __init__.py
-            +day
+            /day
                 __init__.py
-            +space
-                +environment
+            /space
+                /environment
                     __init__.py
-            +night
+            /night
                 __init__.py
-        +question
+        /question
             __init__.py
-        +observe
+        /observe
             README.md
-        +use
+        /use
             __init__.py
-            +force
+            /force
             README.md
-        +intuition
+        /intuition
             __init__.py
-        +homeostasis
+        /homeostasis
             README.md
-        +action
-            +reaction
+        /action
+            /reaction
                 __init__.py
-        +curiosity
+        /curiosity
             __init__.py
-        +will
+        /will
             __init__.py
-        +predict
+        /predict
             README.md
-        +reproduction
+        /reproduction
             __init__.py
-        +mortality
-            +sense
-                +of
+        /mortality
+            /sense
+                /of
                     __init__.py
-        +epistemology
+        /epistemology
             __init__.py
-        +measure
+        /measure
             __init__.py
-        +inference
+        /inference
             README.md
-        +watch
-            +learn
+        /watch
+            /learn
                 __init__.py
-        +satisfy
-            +sleep
+        /satisfy
+            /sleep
                 __init__.py
-            +hunger
+            /hunger
                 __init__.py
-        +copy
-            +skill
-                +to
-                    +learn
+        /copy
+            /skill
+                /to
+                    /learn
                         __init__.py
-                    +compete
-                        +win
+                    /compete
+                        /win
                             __init__.py
-            +action
-                +to
-                    +learn
+            /action
+                /to
+                    /learn
                         __init__.py
-        +maintenance
-            +sleep
+        /maintenance
+            /sleep
                 __init__.py
-            +groom
+            /groom
                 __init__.py
-            +rest
+            /rest
                 __init__.py
-        +teach
-            +others
-                +by
-                    +show
+        /teach
+            /others
+                /by
+                    /show
                         __init__.py
-                    +observe
-                        +correct
+                    /observe
+                        /correct
                             __init__.py
-        +filter
+        /filter
             README.md
-            +reduce
+            /reduce
                 __init__.py
-            +feedback
+            /feedback
                 __init__.py
-            +extract
+            /extract
                 __init__.py
-        +play
+        /play
             README.txt
-        +rank
-            +objects
+        /rank
+            /objects
                 __init__.py
-            +people
+            /people
                 __init__.py
-        +create
+        /create
             __init__.py
-        +risk
-            +gamble
+        /risk
+            /gamble
                 __init__.py
-        +feelings
-            +positive
-                +love
+        /feelings
+            /positive
+                /love
                     __init__.py
-                +pleasure
+                /pleasure
                     __init__.py
-            +negative
-                +fear
+            /negative
+                /fear
                     __init__.py
-                +suffering
+                /suffering
                     __init__.py
-                +anger
+                /anger
                     __init__.py
-                +hate
+                /hate
                     __init__.py
-                +jealousy
+                /jealousy
                     __init__.py
-                +pain
+                /pain
                     __init__.py
-            +premonition
+            /premonition
                 __init__.py
-        +survival
-            +preperation
-                +better
-                    +yourself
+        /survival
+            /preperation
+                /better
+                    /yourself
                         __init__.py
-            +reflex
+            /reflex
                 __init__.py
-        +look
+        /look
             README.md
-            +up
+            /up
                 __init__.py
-            +at
+            /at
                 __init__.py
-        +morality
+        /morality
             README.md
-            +right
+            /right
                 __init__.py
-            +wrong
+            /wrong
                 __init__.py
-        +emotions
+        /emotions
             README.md
-            +pleasure
+            /pleasure
                 __init__.py
-            +stress
+            /stress
                 __init__.py
 
 # add a mind
-+brain
-    +mind
+/brain
+    /mind
         README.md
         __init__.py
-        +perspect
+        /perspect
             README.md
-        +imagination
+        /imagination
             README.md
-        +states
+        /states
             README.md
-        +perception
+        /perception
             README.md
-            +temporal
-                +time
+            /temporal
+                /time
                     README.md
                     __init__.py
-            +physical
-                +water
+            /physical
+                /water
                     __init__.py
-                +vegetable
+                /vegetable
                     __init__.py
-                +places
+                /places
                     __init__.py
-                +thermal
+                /thermal
                     __init__.py
-                +SHAPES
+                /SHAPES
                     __init__.py
-                +air
+                /air
                     __init__.py
-                +mineral
+                /mineral
                     __init__.py
-                +colors
+                /colors
                     __init__.py
-                +animal
-                    +human
-                        +mike
+                /animal
+                    /human
+                        /mike
                             __init__.py
-            +knowledge
-                +literature
+            /knowledge
+                /literature
                     __init__.py
-                +quotes
+                /quotes
                     __init__.py
-                +science
+                /science
                     __init__.py
-                +language
+                /language
                     __init__.py
-                +METAPHORS
+                /METAPHORS
                     __init__.py
-                +math
+                /math
                     __init__.py
-                +concepts
-                    +virtues
+                /concepts
+                    /virtues
                         README.md
-                        +patience
+                        /patience
                             __init__.py
-                        +bravery
+                        /bravery
                             __init__.py
-                        +manners
+                        /manners
                             __init__.py
-                        +tolerance
+                        /tolerance
                             __init__.py
-                    +morality
-                        +right
+                    /morality
+                        /right
                             __init__.py
-                        +fairness
+                        /fairness
                             __init__.py
-                        +wrong
+                        /wrong
                             __init__.py
-                +history
+                /history
                     __init__.py
-                +jokes
+                /jokes
                     __init__.py
-                +geography
+                /geography
                     __init__.py
-                +WEBSITES
+                /WEBSITES
                     __init__.py
-            +self
+            /self
                 __init__.py
-            +spacial
+            /spacial
                 README.md
-                +place
+                /place
                     __init__.py
-            +events
+            /events
                 README.md
                 __init__.py
 
 
 # add the tools, commands and automations
 #[automations]
-+brain
-    +automation
+/brain
+    /automation
         README.md
         __init__.py
-        +commands
+        /commands
             __init__.py
             README.md
-    +tools
+    /tools
         README.md
         trim_depths.sh
         WM_test.sh

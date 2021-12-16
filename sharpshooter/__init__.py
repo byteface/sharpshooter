@@ -4,12 +4,12 @@
 
     A shorthand syntax for creating files and folders.
 
-    +dir
+    /dir
         file.txt < hello world
 
 """
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 __license__ = "MIT"
 __author__ = "@byteface"
 
@@ -320,6 +320,7 @@ class Lex(object):
         "COMMENT",
         "TILDE",
         "BACKSLASH",
+        "SLASH",
     )
 
     # Ignored characters
@@ -413,8 +414,12 @@ class Lex(object):
         # self.depth += 1
         # self.is_root = False
 
-    def t_PLUS(self, t):
-        r"\+"
+    # def t_PLUS(self, t):
+    #     r"\+"
+    #     self.is_dir = True
+
+    def t_SLASH(self, t):
+        r"\/"
         self.is_dir = True
 
     def t_MINUS(self, t):
@@ -490,7 +495,7 @@ class Lex(object):
             # sslog("wrote content into this file:", self.last_file_created)
 
         # skip the rest of the line
-        t.lexer.skip(original_length)  # why plus 1?
+        t.lexer.skip(original_length)
 
     def t_sh(self, t):
         r"\$"
@@ -987,7 +992,7 @@ class tree(object):
                 file_path = os.path.join(dir_path, file_name)
                 if os.path.isdir(file_path):
                     tree_string += "    " * depth
-                    tree_string += "+"+file_name
+                    tree_string += "/"+file_name
                     tree_string += "\n"
                     walk_dir(file_path, depth + 1)
                 else:

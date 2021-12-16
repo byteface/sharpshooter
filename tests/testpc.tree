@@ -1,10 +1,10 @@
-# :+~
+# :/~
 #     test.png
-#     +somedir
+#     /somedir
 #         somescript.py > dir
 
 #[donkey]
-+somedir
+/somedir
     somefile.txt < here some text
     somefile.txt << here some more
 
@@ -12,7 +12,7 @@
 
 
 #[cat]
-+somedir
+/somedir
     somefile.txt << here a 3rd line
     somefile.txt << and a forth line
 
@@ -27,13 +27,13 @@ $ echo 'hi'
 #][]
 
 #[horse fly]
-+:somedir
+/:somedir
     somefile.txt << here a 3rd line
     somefile.txt << and a forth line
 
 
 #[ring-tailed lemur]
-+:somedir
+/:somedir
     somefile.txt << here a 3rd line
     somefile.txt << and a forth line
 
