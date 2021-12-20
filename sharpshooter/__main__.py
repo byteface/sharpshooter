@@ -88,7 +88,10 @@ def parse_args():
         "-p",
         "--pretty",
         help="Prints a commonly seen pretty stylistic tree to the terminal.",
-        action='store_true'
+        # action='store_true',
+        type=str,
+        nargs="?",
+        const="sharpshooter"
     )
     parser.add_argument(
         "-l",
@@ -184,11 +187,21 @@ def do_things(arguments, parser):
         print("done")
         return
     if arguments.mock is not None:
-        name = "sharpshooter"
+        # name = "sharpshooter"
+        if arguments.mock == "sharpshooter":
+            d = 9999
+        else:
+            d = 0
+            try:
+                d = int(arguments.mock)
+            except ValueError:
+                print('Parameter requires integer for depth. None set')
+                return
+        # print('>>>',d)
         if arguments.mock is not None:
             name = arguments.mock
-        filename = f"{name}.tree"
-        content = tree.mock()
+        filename = "sharpshooter.tree"
+        content = tree.mock(d)
         with open(filename, "w") as f:
             f.write(
                 f"""{HEADER}
@@ -201,8 +214,30 @@ def do_things(arguments, parser):
         return
 
     if arguments.pretty is not None:
-        content = tree.mock()
-        print(tree.pretty(content))
+
+        if arguments.pretty == "sharpshooter":
+            d = 9999
+        else:
+            d = 0
+            try:
+                d = int(arguments.pretty)
+            except ValueError:
+                print('Parameter requires integer for depth. None set')
+                return
+
+        content = tree.mock(d)
+
+        # nest everything into the cwd
+        cwd = os.getcwd().split(os.sep)[-1]
+        newcontent = "/" + cwd + "\n"
+        for line in content.split("\n"):
+            newcontent += "    " + line + "\n"
+        content = newcontent
+
+        # print(content)
+        output = tree.pretty(content)
+        print(output)
+        # return output
         return
 
 

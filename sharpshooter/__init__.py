@@ -9,7 +9,7 @@
 
 """
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 __license__ = "MIT"
 __author__ = "@byteface"
 
@@ -978,16 +978,21 @@ class tree(object):
         os.chdir(CWD_b4)
 
     @staticmethod
-    def mock():
+    def mock(depth=0):
         """Create a .tree string from the current working directory
 
         Returns:
             [str]: [a tree string]
         """
         tree_string = ""
+        limit = depth  # depth is used for spacing so can't be none. so use limit
 
         def walk_dir(dir_path: str, depth: int = 0):
+            # print('depth:::', depth)
             nonlocal tree_string
+            nonlocal limit
+            if depth > limit:
+                return
             for file_name in os.listdir(dir_path):
                 file_path = os.path.join(dir_path, file_name)
                 if os.path.isdir(file_path):
@@ -1044,6 +1049,11 @@ class tree(object):
                 next_line_spaces = (len(next_line) - len(next_line.lstrip())) - 4
                 if next_line_spaces == spaces:
                     is_last_child = False
+
+                # unless its the last line of the file. the it is the last child
+                if count+2 >= len(lines)-1:  # is better to check if 2 empty lines ahead?
+                    is_last_child = True
+
                 next_line = next_line.lstrip()
                 next_line = next_line.lstrip("/")
 
