@@ -350,16 +350,16 @@ sharpshooter --test anotherconfig.tree  # parses a .tree file in test mode. also
 
 ```bash
 sharpshooter --mock  # makes a sharpshooter.tree file based on the current working directory. also uses -m
+# sharpshooter --mock 1  # pass optional depth as int
 ```
 
 ```bash
 sharpshooter --dir  # set the current working directory. use with other commands. also uses -d
-
 #i.e. python -m sharpshooter -d tests -f test.tree
 ```
 
 ```bash
-sharpshooter --pretty  # prints a pretty tree of the cwd. also uses -p
+sharpshooter --pretty 0 # prints a pretty tree of the cwd. also uses -p
 
 # i.e
 # ├── refs
@@ -371,6 +371,8 @@ sharpshooter --pretty  # prints a pretty tree of the cwd. also uses -p
 # │   └── remotes
 # │       └── origin
 # │           └── master
+
+# takes optional parameter for depth : int
 
 ```
 
