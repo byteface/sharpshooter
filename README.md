@@ -358,7 +358,23 @@ sharpshooter --dir  # set the current working directory. use with other commands
 #i.e. python -m sharpshooter -d tests -f test.tree
 ```
 
-Finally there's an experimental feature that requires jinja2:
+```bash
+sharpshooter --pretty  # prints a pretty tree of the cwd. also uses -p
+
+# i.e
+# ├── refs
+# │   ├── heads
+# │   │   ├── question
+# │   │   ├── master
+# │   │   └── anytree
+# │   ├── tags
+# │   └── remotes
+# │       └── origin
+# │           └── master
+
+```
+
+There's an optional feature that requires jinja2:
 
 ```bash
 python -m pip install jinja2  # make sure you have jinja2 installed
@@ -385,7 +401,14 @@ import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 ```
 
-For your information, tree is the language and sharpshooter is an implementation. 
+For your information, tree is the language and sharpshooter is an implementation.
+
+pretty is available on the tree class as a static method.
+
+```
+from sharpshooter import tree
+tree.pretty(tree_string)
+```
 
 ## Contributing
 

@@ -277,6 +277,52 @@ class TestCase(unittest.TestCase):
     #     """
 
 
+    def test_pretty(self):
+        print('pretty test --')
+        s1 = """
+/brain
+    /mind
+        README.md
+        __init__.py
+        a.py
+        b.py
+        /perspect
+            c.py
+            d.py
+        /perspect
+            c.py
+            d.py
+            /perspect
+                c.py
+                d.py
+                /perspect
+                    c.py
+                    d.py
+        /perspect
+            c.py
+            d.py
+            /perspect
+                c.py
+                d.py
+                /perspect
+                    c.py
+                    d.py
+            /perspect
+                c.py
+                d.py
+                /perspect
+                    c.py
+                    d.py
+    /body
+        /perspect
+            c.py
+            d.py
+            /perspect
+                c.py
+                d.py
+        """
+        # t = tree(s1, test=True)
+        tree.pretty(s1)
 
 if __name__ == '__main__':
     unittest.main()

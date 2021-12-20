@@ -85,6 +85,12 @@ def parse_args():
         const="sharpshooter"
     )
     parser.add_argument(
+        "-p",
+        "--pretty",
+        help="Prints a commonly seen pretty stylistic tree to the terminal.",
+        action='store_true'
+    )
+    parser.add_argument(
         "-l",
         "--label",
         help="Only creates trees with a given label.",
@@ -192,6 +198,11 @@ def do_things(arguments, parser):
             )
 
         print("done!")
+        return
+
+    if arguments.pretty is not None:
+        content = tree.mock()
+        print(tree.pretty(content))
         return
 
 

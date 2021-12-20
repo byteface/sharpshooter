@@ -9,7 +9,7 @@
 
 """
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 __license__ = "MIT"
 __author__ = "@byteface"
 
@@ -1005,3 +1005,98 @@ class tree(object):
         walk_dir(os.getcwd())
         # print(tree_string)
         return tree_string
+
+    @staticmethod
+    def pretty(tree_string: str) -> str:
+        """
+        ## changes this
+        # /brain
+        #     /mind
+        #         README.md
+        #         __init__.py
+        #         a.py
+        #         b.py
+        #         /perspect
+
+        ## to look like this
+        # brain
+        # ├── README.md
+        # └── mind
+        #     ├── README.md
+        #     ├── __init__.py
+        #     ├── a.py
+        #     ├── b.py
+        #     └── perspect
+        """
+        # print('lets go!')
+        new_tree_string = ""
+        lines = tree_string.split("\n")
+        for count, line in enumerate(lines):
+            if line.strip(' ').lstrip(' ').strip('\n') == "":
+                continue
+            spaces = (len(line) - len(line.lstrip())) - 4  # the 4 is our pattern
+            line = line.lstrip()
+            line = line.lstrip("/")  # remove preceding slash if exists
+
+            is_last_child = True
+            if count < len(lines) - 1:
+                next_line = lines[count + 1]
+                next_line_spaces = (len(next_line) - len(next_line.lstrip())) - 4
+                if next_line_spaces == spaces:
+                    is_last_child = False
+                next_line = next_line.lstrip()
+                next_line = next_line.lstrip("/")
+
+            if spaces > -4:
+                if is_last_child:
+                    new_tree_string += (spaces*' ') + '└── ' + line + "\n"
+                else:
+                    new_tree_string += (spaces*' ') + '├── ' + line + "\n"
+            else:
+                new_tree_string += line + "\n"
+
+        # not bad. Let's go through again backwards and patch it up
+
+        reversed_lines = new_tree_string.split("\n")
+        new_tree_string_reversed = '\n'.join(reversed_lines[::-1])
+
+        prev_pos = None
+        gaps = []
+        newlines = ""
+        prevline = None
+        for count, line in enumerate(new_tree_string_reversed.split("\n")):
+            if line.strip(' ').lstrip(' ').strip('\n') == "":
+                continue
+            if prev_pos is not None:
+                # if its a space replace with '│'
+                if len(line) >= prev_pos:
+                    if line[prev_pos] == ' ':
+                        line = line[:prev_pos] + '│' + line[prev_pos+1:]
+            for gap in gaps:
+                if len(line) > gap:
+                    if line[gap] == ' ':
+                        if len(prevline) > gap:
+                            if prevline[gap] == '│' or prevline[gap] == '└':
+                                line = line[:gap] + '│' + line[gap+1:]
+
+            # find any of these '└' record their position. if next line is space replace with '│'
+            if '└' in line:
+                prev_pos = line.find('└')
+                gaps.append(prev_pos)
+
+            # remove artifacts
+            if '└' in line:
+                pos = line.find('└')
+                if prevline is not None:
+                    if len(prevline) > pos:
+                        if prevline[pos] == '│':
+                            line = line[:pos] + '├' + line[pos+1:]
+
+            prevline = line
+            # print(line, prev_pos)
+            newlines += line + "\n"
+
+        reversed_lines = newlines.split("\n")
+        new_tree_string = '\n'.join(reversed_lines[::-1])
+        # print(new_tree_string)
+        return new_tree_string

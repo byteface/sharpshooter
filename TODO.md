@@ -67,19 +67,6 @@ tree = f''' \
 '''
 ```
 
-TODO - print the tree in a tree format (use anytree lib?)
-```
-Udo
-├── Marc
-│   └── Lian
-└── Dan
-    ├── Jet
-    ├── Jan
-    └── Joe
-        └── dan.txt
-```
-
-
 # another optional way is it use f_ and d_ builder functions
 # TODO - this aint dont yet
 d_('somedir',
